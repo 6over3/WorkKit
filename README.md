@@ -19,7 +19,7 @@ dependencies: [
 ```swift
 import WorkKit
 
-let document = try IWorkParser.open(at: "/path/to/document.pages")
+let document = try IWorkDocument(url: URL(fileURLWithPath: "/path/to/document.pages"))
 print("Document type: \(document.type)")
 print("Format: \(document.format)")
 ```

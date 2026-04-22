@@ -20,35 +20,34 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-struct TNSOS_SheetStylePropertyChangeSetArchive: Sendable {
+struct TNSOS_SheetStylePropertyChangeSetArchive: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   var fill: TSDSOS_SpecFillArchive {
-    get {return _fill ?? TSDSOS_SpecFillArchive()}
-    set {_fill = newValue}
+    get {return _storage._fill ?? TSDSOS_SpecFillArchive()}
+    set {_uniqueStorage()._fill = newValue}
   }
   /// Returns true if `fill` has been explicitly set.
-  var hasFill: Bool {return self._fill != nil}
+  var hasFill: Bool {return _storage._fill != nil}
   /// Clears the value of `fill`. Subsequent reads from it will return its default value.
-  mutating func clearFill() {self._fill = nil}
+  mutating func clearFill() {_uniqueStorage()._fill = nil}
 
   var fillUndefined: Bool {
-    get {return _fillUndefined ?? false}
-    set {_fillUndefined = newValue}
+    get {return _storage._fillUndefined ?? false}
+    set {_uniqueStorage()._fillUndefined = newValue}
   }
   /// Returns true if `fillUndefined` has been explicitly set.
-  var hasFillUndefined: Bool {return self._fillUndefined != nil}
+  var hasFillUndefined: Bool {return _storage._fillUndefined != nil}
   /// Clears the value of `fillUndefined`. Subsequent reads from it will return its default value.
-  mutating func clearFillUndefined() {self._fillUndefined = nil}
+  mutating func clearFillUndefined() {_uniqueStorage()._fillUndefined = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
-  fileprivate var _fill: TSDSOS_SpecFillArchive? = nil
-  fileprivate var _fillUndefined: Bool? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -59,41 +58,81 @@ extension TNSOS_SheetStylePropertyChangeSetArchive: SwiftProtobuf.Message, Swift
   static let protoMessageName: String = _protobuf_package + ".SheetStylePropertyChangeSetArchive"
   static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}fill\0\u{3}fill_undefined\0")
 
+  fileprivate class _StorageClass {
+    var _fill: TSDSOS_SpecFillArchive? = nil
+    var _fillUndefined: Bool? = nil
+
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _fill = source._fill
+      _fillUndefined = source._fillUndefined
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   public var isInitialized: Bool {
-    if let v = self._fill, !v.isInitialized {return false}
-    return true
+    return withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      if let v = _storage._fill, !v.isInitialized {return false}
+      return true
+    }
   }
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._fill) }()
-      case 2: try { try decoder.decodeSingularBoolField(value: &self._fillUndefined) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._fill) }()
+        case 2: try { try decoder.decodeSingularBoolField(value: &_storage._fillUndefined) }()
+        default: break
+        }
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._fill {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    } }()
-    try { if let v = self._fillUndefined {
-      try visitor.visitSingularBoolField(value: v, fieldNumber: 2)
-    } }()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      try { if let v = _storage._fill {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      } }()
+      try { if let v = _storage._fillUndefined {
+        try visitor.visitSingularBoolField(value: v, fieldNumber: 2)
+      } }()
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: TNSOS_SheetStylePropertyChangeSetArchive, rhs: TNSOS_SheetStylePropertyChangeSetArchive) -> Bool {
-    if lhs._fill != rhs._fill {return false}
-    if lhs._fillUndefined != rhs._fillUndefined {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._fill != rhs_storage._fill {return false}
+        if _storage._fillUndefined != rhs_storage._fillUndefined {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

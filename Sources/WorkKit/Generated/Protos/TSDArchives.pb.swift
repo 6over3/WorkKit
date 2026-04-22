@@ -2594,6 +2594,42 @@ struct TSD_ImageDataAttributes: Sendable {
   /// Clears the value of `shouldBeInterpretedAsGenericIfUntagged`. Subsequent reads from it will return its default value.
   mutating func clearShouldBeInterpretedAsGenericIfUntagged() {self._shouldBeInterpretedAsGenericIfUntagged = nil}
 
+  var mediaLibraryAssetID: TSP_UUID {
+    get {return _mediaLibraryAssetID ?? TSP_UUID()}
+    set {_mediaLibraryAssetID = newValue}
+  }
+  /// Returns true if `mediaLibraryAssetID` has been explicitly set.
+  var hasMediaLibraryAssetID: Bool {return self._mediaLibraryAssetID != nil}
+  /// Clears the value of `mediaLibraryAssetID`. Subsequent reads from it will return its default value.
+  mutating func clearMediaLibraryAssetID() {self._mediaLibraryAssetID = nil}
+
+  var mayNeedWatermark: Bool {
+    get {return _mayNeedWatermark ?? false}
+    set {_mayNeedWatermark = newValue}
+  }
+  /// Returns true if `mayNeedWatermark` has been explicitly set.
+  var hasMayNeedWatermark: Bool {return self._mayNeedWatermark != nil}
+  /// Clears the value of `mayNeedWatermark`. Subsequent reads from it will return its default value.
+  mutating func clearMayNeedWatermark() {self._mayNeedWatermark = nil}
+
+  var insertionTimestamp: TSP_Date {
+    get {return _insertionTimestamp ?? TSP_Date()}
+    set {_insertionTimestamp = newValue}
+  }
+  /// Returns true if `insertionTimestamp` has been explicitly set.
+  var hasInsertionTimestamp: Bool {return self._insertionTimestamp != nil}
+  /// Clears the value of `insertionTimestamp`. Subsequent reads from it will return its default value.
+  mutating func clearInsertionTimestamp() {self._insertionTimestamp = nil}
+
+  var isDerivedFromOriginalAsset: Bool {
+    get {return _isDerivedFromOriginalAsset ?? false}
+    set {_isDerivedFromOriginalAsset = newValue}
+  }
+  /// Returns true if `isDerivedFromOriginalAsset` has been explicitly set.
+  var hasIsDerivedFromOriginalAsset: Bool {return self._isDerivedFromOriginalAsset != nil}
+  /// Clears the value of `isDerivedFromOriginalAsset`. Subsequent reads from it will return its default value.
+  mutating func clearIsDerivedFromOriginalAsset() {self._isDerivedFromOriginalAsset = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -2601,6 +2637,10 @@ struct TSD_ImageDataAttributes: Sendable {
   fileprivate var _pixelSize: TSP_Size? = nil
   fileprivate var _imageIsSrgb: Bool? = nil
   fileprivate var _shouldBeInterpretedAsGenericIfUntagged: Bool? = nil
+  fileprivate var _mediaLibraryAssetID: TSP_UUID? = nil
+  fileprivate var _mayNeedWatermark: Bool? = nil
+  fileprivate var _insertionTimestamp: TSP_Date? = nil
+  fileprivate var _isDerivedFromOriginalAsset: Bool? = nil
 }
 
 struct TSD_MovieArchive: SwiftProtobuf.ExtensibleMessage, @unchecked Sendable {
@@ -7756,10 +7796,12 @@ extension TSD_MaskArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
 
 extension TSD_ImageDataAttributes: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".ImageDataAttributes"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}pixel_size\0\u{3}image_is_srgb\0\u{3}should_be_interpreted_as_generic_if_untagged\0")
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}pixel_size\0\u{3}image_is_srgb\0\u{3}should_be_interpreted_as_generic_if_untagged\0\u{3}media_library_asset_id\0\u{3}may_need_watermark\0\u{3}insertion_timestamp\0\u{3}is_derived_from_original_asset\0")
 
   public var isInitialized: Bool {
     if let v = self._pixelSize, !v.isInitialized {return false}
+    if let v = self._mediaLibraryAssetID, !v.isInitialized {return false}
+    if let v = self._insertionTimestamp, !v.isInitialized {return false}
     return true
   }
 
@@ -7772,6 +7814,10 @@ extension TSD_ImageDataAttributes: SwiftProtobuf.Message, SwiftProtobuf._Message
       case 1: try { try decoder.decodeSingularMessageField(value: &self._pixelSize) }()
       case 2: try { try decoder.decodeSingularBoolField(value: &self._imageIsSrgb) }()
       case 3: try { try decoder.decodeSingularBoolField(value: &self._shouldBeInterpretedAsGenericIfUntagged) }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._mediaLibraryAssetID) }()
+      case 5: try { try decoder.decodeSingularBoolField(value: &self._mayNeedWatermark) }()
+      case 6: try { try decoder.decodeSingularMessageField(value: &self._insertionTimestamp) }()
+      case 7: try { try decoder.decodeSingularBoolField(value: &self._isDerivedFromOriginalAsset) }()
       default: break
       }
     }
@@ -7791,6 +7837,18 @@ extension TSD_ImageDataAttributes: SwiftProtobuf.Message, SwiftProtobuf._Message
     try { if let v = self._shouldBeInterpretedAsGenericIfUntagged {
       try visitor.visitSingularBoolField(value: v, fieldNumber: 3)
     } }()
+    try { if let v = self._mediaLibraryAssetID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    } }()
+    try { if let v = self._mayNeedWatermark {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 5)
+    } }()
+    try { if let v = self._insertionTimestamp {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+    } }()
+    try { if let v = self._isDerivedFromOriginalAsset {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 7)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -7798,6 +7856,10 @@ extension TSD_ImageDataAttributes: SwiftProtobuf.Message, SwiftProtobuf._Message
     if lhs._pixelSize != rhs._pixelSize {return false}
     if lhs._imageIsSrgb != rhs._imageIsSrgb {return false}
     if lhs._shouldBeInterpretedAsGenericIfUntagged != rhs._shouldBeInterpretedAsGenericIfUntagged {return false}
+    if lhs._mediaLibraryAssetID != rhs._mediaLibraryAssetID {return false}
+    if lhs._mayNeedWatermark != rhs._mayNeedWatermark {return false}
+    if lhs._insertionTimestamp != rhs._insertionTimestamp {return false}
+    if lhs._isDerivedFromOriginalAsset != rhs._isDerivedFromOriginalAsset {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

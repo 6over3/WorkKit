@@ -34,34 +34,40 @@ struct IWX: AsyncParsableCommand {
     }
 
     mutating func run() async throws {
-        let document = try IWorkParser.open(at: inputPath)
-        let outputDir = output ?? FileManager.default.currentDirectoryPath
         let inputURL = URL(fileURLWithPath: inputPath)
-        let baseFilename = inputURL.deletingPathExtension().lastPathComponent
-
-        let ocrProvider: OCRProvider?
-        if ocr {
-            let languages =
-                ocrLanguages?
-                .components(separatedBy: ",")
-                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .filter { !$0.isEmpty } ?? []
-            ocrProvider = VisionOCRProvider(recognitionLanguages: languages)
-        } else {
-            ocrProvider = nil
-        }
+        let document = try IWorkDocument(url: inputURL)
+        let outputDir = output ?? FileManager.default.currentDirectoryPath
 
         try FileManager.default.createDirectory(
             at: URL(fileURLWithPath: outputDir),
             withIntermediateDirectories: true
         )
 
-        let outputFilename: String
-        let outputURL: URL
+        let baseFilename = inputURL.deletingPathExtension().lastPathComponent
 
+        if ocr {
+            let languages =
+                ocrLanguages?
+                .components(separatedBy: ",")
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty } ?? []
+            let provider = VisionOCRProvider(recognitionLanguages: languages)
+            try await convert(document: document, ocrProvider: provider, baseFilename: baseFilename, outputDir: outputDir)
+        } else {
+            try await convert(document: document, baseFilename: baseFilename, outputDir: outputDir)
+        }
+    }
+
+    private func convert(
+        document: IWorkDocument,
+        ocrProvider: VisionOCRProvider,
+        baseFilename: String,
+        outputDir: String
+    ) async throws {
+        let outputURL: URL
         switch format {
         case .markdown:
-            let config = MarkdownVisitor.Configuration(
+            let config = MarkdownVisitor<VisionOCRProvider>.Configuration(
                 outputDirectory: outputDir,
                 includeSlideSheetTitles: !noTitles
             )
@@ -71,20 +77,44 @@ struct IWX: AsyncParsableCommand {
                 with: ocrProvider
             )
             try await visitor.accept()
-
-            outputFilename = "\(baseFilename).md"
-            outputURL = URL(fileURLWithPath: outputDir).appendingPathComponent(outputFilename)
+            outputURL = URL(fileURLWithPath: outputDir).appendingPathComponent("\(baseFilename).md")
             try visitor.markdown.write(to: outputURL, atomically: true, encoding: .utf8)
-            print("Converted: \(outputURL.path)")
 
         case .debug:
             let visitor = DebugTextExtractor(using: document, with: ocrProvider)
             try await visitor.accept()
-
-            outputFilename = "\(baseFilename).txt"
-            outputURL = URL(fileURLWithPath: outputDir).appendingPathComponent(outputFilename)
+            outputURL = URL(fileURLWithPath: outputDir).appendingPathComponent("\(baseFilename).txt")
             try visitor.text.write(to: outputURL, atomically: true, encoding: .utf8)
-            print("Converted: \(outputURL.path)")
         }
+        print("Converted: \(outputURL.path)")
+    }
+
+    private func convert(
+        document: IWorkDocument,
+        baseFilename: String,
+        outputDir: String
+    ) async throws {
+        let outputURL: URL
+        switch format {
+        case .markdown:
+            let config = MarkdownVisitor<NullOCRProvider>.Configuration(
+                outputDirectory: outputDir,
+                includeSlideSheetTitles: !noTitles
+            )
+            let visitor = MarkdownVisitor<NullOCRProvider>(
+                using: document,
+                configuration: config
+            )
+            try await visitor.accept()
+            outputURL = URL(fileURLWithPath: outputDir).appendingPathComponent("\(baseFilename).md")
+            try visitor.markdown.write(to: outputURL, atomically: true, encoding: .utf8)
+
+        case .debug:
+            let visitor = DebugTextExtractor<NullOCRProvider>(using: document)
+            try await visitor.accept()
+            outputURL = URL(fileURLWithPath: outputDir).appendingPathComponent("\(baseFilename).txt")
+            try visitor.text.write(to: outputURL, atomically: true, encoding: .utf8)
+        }
+        print("Converted: \(outputURL.path)")
     }
 }

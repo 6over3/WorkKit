@@ -2474,6 +2474,99 @@ struct TST_StructuredTextImportRecord: @unchecked Sendable {
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
+struct TST_StructuredTextImportRecordUID: @unchecked Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var importSettings: TSK_StructuredTextImportSettings {
+    get {return _storage._importSettings ?? TSK_StructuredTextImportSettings()}
+    set {_uniqueStorage()._importSettings = newValue}
+  }
+  /// Returns true if `importSettings` has been explicitly set.
+  var hasImportSettings: Bool {return _storage._importSettings != nil}
+  /// Clears the value of `importSettings`. Subsequent reads from it will return its default value.
+  mutating func clearImportSettings() {_uniqueStorage()._importSettings = nil}
+
+  var importSource: String {
+    get {return _storage._importSource ?? String()}
+    set {_uniqueStorage()._importSource = newValue}
+  }
+  /// Returns true if `importSource` has been explicitly set.
+  var hasImportSource: Bool {return _storage._importSource != nil}
+  /// Clears the value of `importSource`. Subsequent reads from it will return its default value.
+  mutating func clearImportSource() {_uniqueStorage()._importSource = nil}
+
+  var importDate: Double {
+    get {return _storage._importDate ?? 0}
+    set {_uniqueStorage()._importDate = newValue}
+  }
+  /// Returns true if `importDate` has been explicitly set.
+  var hasImportDate: Bool {return _storage._importDate != nil}
+  /// Clears the value of `importDate`. Subsequent reads from it will return its default value.
+  mutating func clearImportDate() {_uniqueStorage()._importDate = nil}
+
+  var sourceData: Data {
+    get {return _storage._sourceData ?? Data()}
+    set {_uniqueStorage()._sourceData = newValue}
+  }
+  /// Returns true if `sourceData` has been explicitly set.
+  var hasSourceData: Bool {return _storage._sourceData != nil}
+  /// Clears the value of `sourceData`. Subsequent reads from it will return its default value.
+  mutating func clearSourceData() {_uniqueStorage()._sourceData = nil}
+
+  var sourceEncoding: UInt64 {
+    get {return _storage._sourceEncoding ?? 0}
+    set {_uniqueStorage()._sourceEncoding = newValue}
+  }
+  /// Returns true if `sourceEncoding` has been explicitly set.
+  var hasSourceEncoding: Bool {return _storage._sourceEncoding != nil}
+  /// Clears the value of `sourceEncoding`. Subsequent reads from it will return its default value.
+  mutating func clearSourceEncoding() {_uniqueStorage()._sourceEncoding = nil}
+
+  var confidence: Float {
+    get {return _storage._confidence ?? 0}
+    set {_uniqueStorage()._confidence = newValue}
+  }
+  /// Returns true if `confidence` has been explicitly set.
+  var hasConfidence: Bool {return _storage._confidence != nil}
+  /// Clears the value of `confidence`. Subsequent reads from it will return its default value.
+  mutating func clearConfidence() {_uniqueStorage()._confidence = nil}
+
+  var importedUidRegion: TST_CellUIDRegionArchive {
+    get {return _storage._importedUidRegion ?? TST_CellUIDRegionArchive()}
+    set {_uniqueStorage()._importedUidRegion = newValue}
+  }
+  /// Returns true if `importedUidRegion` has been explicitly set.
+  var hasImportedUidRegion: Bool {return _storage._importedUidRegion != nil}
+  /// Clears the value of `importedUidRegion`. Subsequent reads from it will return its default value.
+  mutating func clearImportedUidRegion() {_uniqueStorage()._importedUidRegion = nil}
+
+  var sourceRowCount: UInt64 {
+    get {return _storage._sourceRowCount ?? 0}
+    set {_uniqueStorage()._sourceRowCount = newValue}
+  }
+  /// Returns true if `sourceRowCount` has been explicitly set.
+  var hasSourceRowCount: Bool {return _storage._sourceRowCount != nil}
+  /// Clears the value of `sourceRowCount`. Subsequent reads from it will return its default value.
+  mutating func clearSourceRowCount() {_uniqueStorage()._sourceRowCount = nil}
+
+  var sourceColumnCount: UInt64 {
+    get {return _storage._sourceColumnCount ?? 0}
+    set {_uniqueStorage()._sourceColumnCount = newValue}
+  }
+  /// Returns true if `sourceColumnCount` has been explicitly set.
+  var hasSourceColumnCount: Bool {return _storage._sourceColumnCount != nil}
+  /// Clears the value of `sourceColumnCount`. Subsequent reads from it will return its default value.
+  mutating func clearSourceColumnCount() {_uniqueStorage()._sourceColumnCount = nil}
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
+}
+
 struct TST_TableModelArchive: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -12290,6 +12383,141 @@ extension TST_StructuredTextImportRecord: SwiftProtobuf.Message, SwiftProtobuf._
         if _storage._sourceEncoding != rhs_storage._sourceEncoding {return false}
         if _storage._confidence != rhs_storage._confidence {return false}
         if _storage._importedRegion != rhs_storage._importedRegion {return false}
+        if _storage._sourceRowCount != rhs_storage._sourceRowCount {return false}
+        if _storage._sourceColumnCount != rhs_storage._sourceColumnCount {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension TST_StructuredTextImportRecordUID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".StructuredTextImportRecordUID"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}import_settings\0\u{3}import_source\0\u{3}import_date\0\u{3}source_data\0\u{3}source_encoding\0\u{1}confidence\0\u{3}imported_uid_region\0\u{3}source_row_count\0\u{3}source_column_count\0")
+
+  fileprivate class _StorageClass {
+    var _importSettings: TSK_StructuredTextImportSettings? = nil
+    var _importSource: String? = nil
+    var _importDate: Double? = nil
+    var _sourceData: Data? = nil
+    var _sourceEncoding: UInt64? = nil
+    var _confidence: Float? = nil
+    var _importedUidRegion: TST_CellUIDRegionArchive? = nil
+    var _sourceRowCount: UInt64? = nil
+    var _sourceColumnCount: UInt64? = nil
+
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _importSettings = source._importSettings
+      _importSource = source._importSource
+      _importDate = source._importDate
+      _sourceData = source._sourceData
+      _sourceEncoding = source._sourceEncoding
+      _confidence = source._confidence
+      _importedUidRegion = source._importedUidRegion
+      _sourceRowCount = source._sourceRowCount
+      _sourceColumnCount = source._sourceColumnCount
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
+  public var isInitialized: Bool {
+    return withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      if _storage._importSettings == nil {return false}
+      if let v = _storage._importSettings, !v.isInitialized {return false}
+      if let v = _storage._importedUidRegion, !v.isInitialized {return false}
+      return true
+    }
+  }
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._importSettings) }()
+        case 2: try { try decoder.decodeSingularStringField(value: &_storage._importSource) }()
+        case 3: try { try decoder.decodeSingularDoubleField(value: &_storage._importDate) }()
+        case 4: try { try decoder.decodeSingularBytesField(value: &_storage._sourceData) }()
+        case 5: try { try decoder.decodeSingularUInt64Field(value: &_storage._sourceEncoding) }()
+        case 6: try { try decoder.decodeSingularFloatField(value: &_storage._confidence) }()
+        case 7: try { try decoder.decodeSingularMessageField(value: &_storage._importedUidRegion) }()
+        case 8: try { try decoder.decodeSingularUInt64Field(value: &_storage._sourceRowCount) }()
+        case 9: try { try decoder.decodeSingularUInt64Field(value: &_storage._sourceColumnCount) }()
+        default: break
+        }
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      try { if let v = _storage._importSettings {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      } }()
+      try { if let v = _storage._importSource {
+        try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+      } }()
+      try { if let v = _storage._importDate {
+        try visitor.visitSingularDoubleField(value: v, fieldNumber: 3)
+      } }()
+      try { if let v = _storage._sourceData {
+        try visitor.visitSingularBytesField(value: v, fieldNumber: 4)
+      } }()
+      try { if let v = _storage._sourceEncoding {
+        try visitor.visitSingularUInt64Field(value: v, fieldNumber: 5)
+      } }()
+      try { if let v = _storage._confidence {
+        try visitor.visitSingularFloatField(value: v, fieldNumber: 6)
+      } }()
+      try { if let v = _storage._importedUidRegion {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+      } }()
+      try { if let v = _storage._sourceRowCount {
+        try visitor.visitSingularUInt64Field(value: v, fieldNumber: 8)
+      } }()
+      try { if let v = _storage._sourceColumnCount {
+        try visitor.visitSingularUInt64Field(value: v, fieldNumber: 9)
+      } }()
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: TST_StructuredTextImportRecordUID, rhs: TST_StructuredTextImportRecordUID) -> Bool {
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._importSettings != rhs_storage._importSettings {return false}
+        if _storage._importSource != rhs_storage._importSource {return false}
+        if _storage._importDate != rhs_storage._importDate {return false}
+        if _storage._sourceData != rhs_storage._sourceData {return false}
+        if _storage._sourceEncoding != rhs_storage._sourceEncoding {return false}
+        if _storage._confidence != rhs_storage._confidence {return false}
+        if _storage._importedUidRegion != rhs_storage._importedUidRegion {return false}
         if _storage._sourceRowCount != rhs_storage._sourceRowCount {return false}
         if _storage._sourceColumnCount != rhs_storage._sourceColumnCount {return false}
         return true

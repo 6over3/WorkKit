@@ -22,7 +22,7 @@ import Foundation
 /// ## Example
 ///
 /// ```swift
-/// let document = try IWorkParser.open(at: "/path/to/document.pages")
+/// let document = try IWorkDocument(url: URL(fileURLWithPath: "/path/to/document.pages"))
 /// let metadata = document.metadata
 ///
 /// if let uuid = metadata.properties?.documentUUID {

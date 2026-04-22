@@ -781,6 +781,13 @@ public protocol OCRProvider: Sendable {
   ) async throws -> OCRResult
 }
 
+/// Placeholder used when no OCR provider is configured.
+public struct NullOCRProvider: OCRProvider {
+  public func recognizeText(in imageData: Data, info: ImageInfo) async throws -> OCRResult {
+    fatalError("OCR not configured")
+  }
+}
+
 public struct Mask: Sendable, Codable, Equatable {
   /// The geometric shape of the mask (e.g., a star, rounded rectangle, or custom path).
   public let path: PathSource
@@ -3159,9 +3166,11 @@ public struct Object3DInfo: Sendable, Codable, Equatable {
 /// ```
 public protocol IWorkDocumentVisitor: Sendable {
 
+  associatedtype OCR: OCRProvider = NullOCRProvider
+
   // MARK: - Document-Level
 
-  init(using document: IWorkDocument, with ocrProvider: OCRProvider?)
+  init(using document: IWorkDocument, with ocrProvider: OCR?)
 
   func accept() async throws
 

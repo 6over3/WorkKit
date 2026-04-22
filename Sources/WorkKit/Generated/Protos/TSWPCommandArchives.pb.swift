@@ -134,8 +134,8 @@ struct TSWP_TextCommandArchive: @unchecked Sendable {
   /// Clears the value of `textCommandFlags`. Subsequent reads from it will return its default value.
   mutating func clearTextCommandFlags() {_uniqueStorage()._textCommandFlags = nil}
 
-  var kind: TSWP_TextCommandArchive.Kind {
-    get {return _storage._kind ?? .kKindContained}
+  var kind: UInt32 {
+    get {return _storage._kind ?? 0}
     set {_uniqueStorage()._kind = newValue}
   }
   /// Returns true if `kind` has been explicitly set.
@@ -144,33 +144,6 @@ struct TSWP_TextCommandArchive: @unchecked Sendable {
   mutating func clearKind() {_uniqueStorage()._kind = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  enum Kind: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
-    case kKindContained = 0
-    case kKindReplaceText = 1
-    case kKindPaste = 2
-    case kKindParagraphStyle = 3
-    case kKindListStyle = 4
-    case kKindIndentParagraphLevel = 5
-    case kKindDragText = 6
-    case kKindPasteStyle = 7
-    case kKindApplyChangesInRange = 8
-    case kKindInsertCitationField = 10
-    case kKindInsertBibliographyEntry = 11
-    case kKindFormatCitationFields = 12
-    case kKindInsertTocsmartField = 13
-    case kKindInsertDateTimeFieldDeprecated = 14
-    case kKindUpdateDateTimeField = 15
-    case kKindSetParagraphFirstTopicNumber = 16
-    case kKindCharacterStyle = 17
-    case kKindRevertStylesDeprecated = 18
-    case kKindSetParagraphBidi = 19
-
-    init() {
-      self = .kKindContained
-    }
-
-  }
 
   init() {}
 
@@ -218,8 +191,8 @@ struct TSWP_StorageActionCommandArchive: @unchecked Sendable {
   /// Clears the value of `textCommandFlags`. Subsequent reads from it will return its default value.
   mutating func clearTextCommandFlags() {_uniqueStorage()._textCommandFlags = nil}
 
-  var kind: TSWP_StorageActionCommandArchive.Kind {
-    get {return _storage._kind ?? .kKindContained}
+  var kind: UInt32 {
+    get {return _storage._kind ?? 0}
     set {_uniqueStorage()._kind = newValue}
   }
   /// Returns true if `kind` has been explicitly set.
@@ -296,57 +269,6 @@ struct TSWP_StorageActionCommandArchive: @unchecked Sendable {
   mutating func clearWpKind() {_uniqueStorage()._wpKind = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  enum Kind: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
-    case kKindContained = 0
-    case kKindReplaceText = 1
-    case kKindPaste = 2
-    case kKindParagraphStyle = 3
-    case kKindListStyle = 4
-    case kKindIndentParagraphLevel = 5
-    case kKindDragText = 6
-    case kKindPasteStyle = 7
-    case kKindApplyChangesInRange = 8
-    case kKindInsertCitationField = 10
-    case kKindInsertBibliographyEntry = 11
-    case kKindFormatCitationFields = 12
-    case kKindInsertTocsmartField = 13
-    case kKindInsertDateTimeField = 14
-    case kKindUpdateDateTimeField = 15
-    case kKindSetParagraphFirstTopicNumber = 16
-    case kKindCharacterStyle = 17
-    case kKindRevertStyles = 18
-    case kKindSetParagraphBidi = 19
-    case kKindFormatText = 20
-    case kKindInsertAttachment = 21
-    case kKindCreateHyperlink = 22
-    case kKindModifyHyperlink = 23
-    case kKindRemoveHyperlink = 24
-    case kKindApplyHighlightText = 25
-    case kKindPropagateStyleChanges = 26
-    case kKindMovedAnchoredDrawableInline = 27
-    case kKindMoveDrawablesAttached = 28
-    case kKindMoveMoveDrawablesFloating = 29
-    case kKindMoveInlineDrawableAnchored = 30
-    case kKindAnchorAttachment = 31
-    case kKindBookmark = 32
-    case kKindReplaceSection = 33
-    case kKindApplyPencilAnnotation = 34
-    case kKindApplyRuby = 35
-    case kKindModifyRuby = 36
-    case kKindRemoveRuby = 37
-    case kKindTateChuYoko = 38
-    case kKindDropCapStyle = 39
-    case kKindMergeField = 40
-    case kKindModifyMergeField = 41
-    case kKindMergeFieldTypeReplace = 42
-    case kKindApplyPlaceholderText = 43
-
-    init() {
-      self = .kKindContained
-    }
-
-  }
 
   init() {}
 
@@ -2591,7 +2513,7 @@ extension TSWP_TextCommandArchive: SwiftProtobuf.Message, SwiftProtobuf._Message
     var _redoRestoreRangeLocation: UInt32? = nil
     var _redoRestoreRangeLength: UInt32? = nil
     var _textCommandFlags: UInt32? = nil
-    var _kind: TSWP_TextCommandArchive.Kind? = nil
+    var _kind: UInt32? = nil
 
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
@@ -2646,7 +2568,7 @@ extension TSWP_TextCommandArchive: SwiftProtobuf.Message, SwiftProtobuf._Message
         case 6: try { try decoder.decodeSingularUInt32Field(value: &_storage._redoRestoreRangeLocation) }()
         case 7: try { try decoder.decodeSingularUInt32Field(value: &_storage._redoRestoreRangeLength) }()
         case 9: try { try decoder.decodeSingularUInt32Field(value: &_storage._textCommandFlags) }()
-        case 10: try { try decoder.decodeSingularEnumField(value: &_storage._kind) }()
+        case 10: try { try decoder.decodeSingularUInt32Field(value: &_storage._kind) }()
         default: break
         }
       }
@@ -2684,7 +2606,7 @@ extension TSWP_TextCommandArchive: SwiftProtobuf.Message, SwiftProtobuf._Message
         try visitor.visitSingularUInt32Field(value: v, fieldNumber: 9)
       } }()
       try { if let v = _storage._kind {
-        try visitor.visitSingularEnumField(value: v, fieldNumber: 10)
+        try visitor.visitSingularUInt32Field(value: v, fieldNumber: 10)
       } }()
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -2713,10 +2635,6 @@ extension TSWP_TextCommandArchive: SwiftProtobuf.Message, SwiftProtobuf._Message
   }
 }
 
-extension TSWP_TextCommandArchive.Kind: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0kKindContained\0\u{1}kKindReplaceText\0\u{1}kKindPaste\0\u{1}kKindParagraphStyle\0\u{1}kKindListStyle\0\u{1}kKindIndentParagraphLevel\0\u{1}kKindDragText\0\u{1}kKindPasteStyle\0\u{1}kKindApplyChangesInRange\0\u{2}\u{2}kKindInsertCitationField\0\u{1}kKindInsertBibliographyEntry\0\u{1}kKindFormatCitationFields\0\u{1}kKindInsertTOCSmartField\0\u{1}kKindInsertDateTimeField_DEPRECATED\0\u{1}kKindUpdateDateTimeField\0\u{1}kKindSetParagraphFirstTopicNumber\0\u{1}kKindCharacterStyle\0\u{1}kKindRevertStyles_DEPRECATED\0\u{1}kKindSetParagraphBidi\0")
-}
-
 extension TSWP_StorageActionCommandArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".StorageActionCommandArchive"
   static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}super\0\u{1}storage\0\u{3}undo_transaction\0\u{3}text_command_flags\0\u{1}kind\0\u{3}custom_format_keys\0\u{3}is_forward_inverse_command\0\u{1}coalesceable\0\u{3}coalescing_text\0\u{3}should_migrate_styles\0\u{3}changed_data_reference_record\0\u{3}coalescing_property\0\u{3}wp_kind\0")
@@ -2726,7 +2644,7 @@ extension TSWP_StorageActionCommandArchive: SwiftProtobuf.Message, SwiftProtobuf
     var _storage: TSP_UUIDPath? = nil
     var _undoTransaction: TSWP_UndoTransaction? = nil
     var _textCommandFlags: UInt32? = nil
-    var _kind: TSWP_StorageActionCommandArchive.Kind? = nil
+    var _kind: UInt32? = nil
     var _customFormatKeys: [TSP_UUID] = []
     var _isForwardInverseCommand: Bool? = nil
     var _coalesceable: Bool? = nil
@@ -2791,7 +2709,7 @@ extension TSWP_StorageActionCommandArchive: SwiftProtobuf.Message, SwiftProtobuf
         case 2: try { try decoder.decodeSingularMessageField(value: &_storage._storage) }()
         case 3: try { try decoder.decodeSingularMessageField(value: &_storage._undoTransaction) }()
         case 4: try { try decoder.decodeSingularUInt32Field(value: &_storage._textCommandFlags) }()
-        case 5: try { try decoder.decodeSingularEnumField(value: &_storage._kind) }()
+        case 5: try { try decoder.decodeSingularUInt32Field(value: &_storage._kind) }()
         case 6: try { try decoder.decodeRepeatedMessageField(value: &_storage._customFormatKeys) }()
         case 7: try { try decoder.decodeSingularBoolField(value: &_storage._isForwardInverseCommand) }()
         case 8: try { try decoder.decodeSingularBoolField(value: &_storage._coalesceable) }()
@@ -2825,7 +2743,7 @@ extension TSWP_StorageActionCommandArchive: SwiftProtobuf.Message, SwiftProtobuf
         try visitor.visitSingularUInt32Field(value: v, fieldNumber: 4)
       } }()
       try { if let v = _storage._kind {
-        try visitor.visitSingularEnumField(value: v, fieldNumber: 5)
+        try visitor.visitSingularUInt32Field(value: v, fieldNumber: 5)
       } }()
       if !_storage._customFormatKeys.isEmpty {
         try visitor.visitRepeatedMessageField(value: _storage._customFormatKeys, fieldNumber: 6)
@@ -2880,10 +2798,6 @@ extension TSWP_StorageActionCommandArchive: SwiftProtobuf.Message, SwiftProtobuf
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
-}
-
-extension TSWP_StorageActionCommandArchive.Kind: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0kKindContained\0\u{1}kKindReplaceText\0\u{1}kKindPaste\0\u{1}kKindParagraphStyle\0\u{1}kKindListStyle\0\u{1}kKindIndentParagraphLevel\0\u{1}kKindDragText\0\u{1}kKindPasteStyle\0\u{1}kKindApplyChangesInRange\0\u{2}\u{2}kKindInsertCitationField\0\u{1}kKindInsertBibliographyEntry\0\u{1}kKindFormatCitationFields\0\u{1}kKindInsertTOCSmartField\0\u{1}kKindInsertDateTimeField\0\u{1}kKindUpdateDateTimeField\0\u{1}kKindSetParagraphFirstTopicNumber\0\u{1}kKindCharacterStyle\0\u{1}kKindRevertStyles\0\u{1}kKindSetParagraphBidi\0\u{1}kKindFormatText\0\u{1}kKindInsertAttachment\0\u{1}kKindCreateHyperlink\0\u{1}kKindModifyHyperlink\0\u{1}kKindRemoveHyperlink\0\u{1}kKindApplyHighlightText\0\u{1}kKindPropagateStyleChanges\0\u{1}kKindMovedAnchoredDrawableInline\0\u{1}kKindMoveDrawablesAttached\0\u{1}kKindMoveMoveDrawablesFloating\0\u{1}kKindMoveInlineDrawableAnchored\0\u{1}kKindAnchorAttachment\0\u{1}kKindBookmark\0\u{1}kKindReplaceSection\0\u{1}kKindApplyPencilAnnotation\0\u{1}kKindApplyRuby\0\u{1}kKindModifyRuby\0\u{1}kKindRemoveRuby\0\u{1}kKindTateChuYoko\0\u{1}kKindDropCapStyle\0\u{1}kKindMergeField\0\u{1}kKindModifyMergeField\0\u{1}kKindMergeFieldTypeReplace\0\u{1}kKindApplyPlaceholderText\0")
 }
 
 extension TSWP_SetColumnStyleCommandArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {

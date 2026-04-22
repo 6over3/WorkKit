@@ -424,6 +424,15 @@ struct TSP_Color: Sendable {
   /// Clears the value of `a`. Subsequent reads from it will return its default value.
   mutating func clearA() {self._a = nil}
 
+  var headroom: Float {
+    get {return _headroom ?? 1}
+    set {_headroom = newValue}
+  }
+  /// Returns true if `headroom` has been explicitly set.
+  var hasHeadroom: Bool {return self._headroom != nil}
+  /// Clears the value of `headroom`. Subsequent reads from it will return its default value.
+  mutating func clearHeadroom() {self._headroom = nil}
+
   var c: Float {
     get {return _c ?? 0}
     set {_c = newValue}
@@ -500,6 +509,7 @@ struct TSP_Color: Sendable {
   fileprivate var _b: Float? = nil
   fileprivate var _rgbspace: TSP_Color.RGBColorSpace? = nil
   fileprivate var _a: Float? = nil
+  fileprivate var _headroom: Float? = nil
   fileprivate var _c: Float? = nil
   fileprivate var _m: Float? = nil
   fileprivate var _y: Float? = nil
@@ -1977,7 +1987,7 @@ extension TSP_IndexSet: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 
 extension TSP_Color: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".Color"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}model\0\u{2}\u{2}r\0\u{1}g\0\u{1}b\0\u{1}a\0\u{1}c\0\u{1}m\0\u{1}y\0\u{1}k\0\u{1}w\0\u{1}rgbspace\0")
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}model\0\u{2}\u{2}r\0\u{1}g\0\u{1}b\0\u{1}a\0\u{1}c\0\u{1}m\0\u{1}y\0\u{1}k\0\u{1}w\0\u{1}rgbspace\0\u{1}headroom\0")
 
   public var isInitialized: Bool {
     if self._model == nil {return false}
@@ -2001,6 +2011,7 @@ extension TSP_Color: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
       case 10: try { try decoder.decodeSingularFloatField(value: &self._k) }()
       case 11: try { try decoder.decodeSingularFloatField(value: &self._w) }()
       case 12: try { try decoder.decodeSingularEnumField(value: &self._rgbspace) }()
+      case 13: try { try decoder.decodeSingularFloatField(value: &self._headroom) }()
       default: break
       }
     }
@@ -2044,6 +2055,9 @@ extension TSP_Color: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     try { if let v = self._rgbspace {
       try visitor.visitSingularEnumField(value: v, fieldNumber: 12)
     } }()
+    try { if let v = self._headroom {
+      try visitor.visitSingularFloatField(value: v, fieldNumber: 13)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -2054,6 +2068,7 @@ extension TSP_Color: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if lhs._b != rhs._b {return false}
     if lhs._rgbspace != rhs._rgbspace {return false}
     if lhs._a != rhs._a {return false}
+    if lhs._headroom != rhs._headroom {return false}
     if lhs._c != rhs._c {return false}
     if lhs._m != rhs._m {return false}
     if lhs._y != rhs._y {return false}

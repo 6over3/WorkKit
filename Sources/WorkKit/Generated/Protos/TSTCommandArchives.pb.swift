@@ -4899,8 +4899,8 @@ struct TST_CommandSetStructuredTextImportRecordArchive: Sendable {
   /// Clears the value of ``super``. Subsequent reads from it will return its default value.
   mutating func clearSuper() {self._super = nil}
 
-  var newImportRecord: TST_StructuredTextImportRecord {
-    get {return _newImportRecord ?? TST_StructuredTextImportRecord()}
+  var newImportRecord: TST_StructuredTextImportRecordUID {
+    get {return _newImportRecord ?? TST_StructuredTextImportRecordUID()}
     set {_newImportRecord = newValue}
   }
   /// Returns true if `newImportRecord` has been explicitly set.
@@ -4922,7 +4922,7 @@ struct TST_CommandSetStructuredTextImportRecordArchive: Sendable {
   init() {}
 
   fileprivate var _super: TST_TableCommandArchive? = nil
-  fileprivate var _newImportRecord: TST_StructuredTextImportRecord? = nil
+  fileprivate var _newImportRecord: TST_StructuredTextImportRecordUID? = nil
   fileprivate var _oldImportRecord: TST_StructuredTextImportRecord? = nil
 }
 

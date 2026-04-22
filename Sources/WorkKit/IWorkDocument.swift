@@ -5,7 +5,7 @@ import SwiftProtobuf
 
 /// Represents an iWork document (Pages, Numbers, or Keynote).
 ///
-/// This class provides access to the document's structure, metadata, and content.
+/// Provides access to the document's structure, metadata, and content.
 ///
 /// ## Topics
 ///
@@ -31,7 +31,7 @@ import SwiftProtobuf
 /// ## Example
 ///
 /// ```swift
-/// let document = try IWorkParser.open(at: "/path/to/document.pages")
+/// let document = try IWorkDocument(url: URL(fileURLWithPath: "/path/to/document.pages"))
 ///
 /// // Access metadata
 /// print("Document type: \(document.type)")
@@ -52,7 +52,7 @@ import SwiftProtobuf
 /// let visitor = MyVisitor(document: document)
 /// try await visitor.accept()
 /// ```
-public final class IWorkDocument: @unchecked Sendable {
+public struct IWorkDocument: @unchecked Sendable {
 
   // MARK: - Public Properties
 
@@ -66,32 +66,43 @@ public final class IWorkDocument: @unchecked Sendable {
   public let metadata: IWorkMetadata
 
   /// Content storage for reading files from the document.
-  public let storage: ContentStorage
+  public let storage: DocumentStorage
 
   // MARK: - Internal Properties
 
   /// The internal record storage, indexed by identifier.
-  private let records: [UInt64: SwiftProtobuf.Message]
+  internal let records: [UInt64: SwiftProtobuf.Message]
 
-  /// Path to the document package root.
-  package let packagePath: String
+  /// URL to the document package root.
+  package let packageURL: URL
 
   // MARK: - Initialization
 
-  internal init(
+  /// Opens and parses an iWork document.
+  ///
+  /// Supports both legacy (2008-2009) and modern (2013+) iWork formats.
+  /// The document can be either a directory bundle or a ZIP archive.
+  ///
+  /// - Parameter url: File URL to the iWork document package.
+  /// - Throws: ``IWorkError`` if the document cannot be opened or parsed.
+  public init(url: URL) throws {
+    self = try IWorkParser.open(at: url)
+  }
+
+  package init(
     type: DocumentType,
     format: FormatVersion,
     records: [UInt64: SwiftProtobuf.Message],
     metadata: IWorkMetadata,
-    storage: ContentStorage,
-    packagePath: String
+    storage: DocumentStorage,
+    packageURL: URL
   ) {
     self.type = type
     self.format = format
     self.records = records
     self.metadata = metadata
     self.storage = storage
-    self.packagePath = packagePath
+    self.packageURL = packageURL
   }
 
   // MARK: - Preview Access
@@ -204,30 +215,14 @@ public final class IWorkDocument: @unchecked Sendable {
 
   /// Traverses the document and invokes visitor methods for each element.
   ///
-  /// This method walks through the document structure in logical order,
-  /// calling appropriate visitor methods as elements are encountered.
-  ///
-  /// ## Example
-  ///
-  /// ```swift
-  /// struct MyVisitor: IWorkDocumentVisitor {
-  ///   func visitText(_ text: String, style: CharacterStyle, hyperlink: Hyperlink?, footnotes: [Footnote]?) async {
-  ///     print("Found text: \(text)")
-  ///   }
-  /// }
-  ///
-  /// let visitor = MyVisitor(document: document)
-  /// try await visitor.accept()
-  /// ```
-  ///
   /// - Parameters:
   ///   - visitor: The visitor to receive callbacks during traversal.
-  ///   - ocrProvider: Optional OCR provider for image text recognition.
+  ///   - ocrProvider: OCR provider for image text recognition.
   /// - Throws: ``IWorkError/legacyNotImplemented`` for legacy format documents,
   ///           or errors during traversal or visitor processing.
-  public func accept(
-    visitor: IWorkDocumentVisitor,
-    ocrProvider: OCRProvider? = nil
+  public func accept<V: IWorkDocumentVisitor, O: OCRProvider>(
+    visitor: V,
+    ocrProvider: O
   ) async throws {
     switch format {
     case .modern:
@@ -235,6 +230,28 @@ public final class IWorkDocument: @unchecked Sendable {
         document: self,
         visitor: visitor,
         ocrProvider: ocrProvider
+      )
+      try await context.traverse()
+
+    case .legacy:
+      throw IWorkError.legacyNotImplemented
+    }
+  }
+
+  /// Traverses the document and invokes visitor methods for each element.
+  ///
+  /// - Parameter visitor: The visitor to receive callbacks during traversal.
+  /// - Throws: ``IWorkError/legacyNotImplemented`` for legacy format documents,
+  ///           or errors during traversal or visitor processing.
+  public func accept<V: IWorkDocumentVisitor>(
+    visitor: V
+  ) async throws {
+    switch format {
+    case .modern:
+      let context = TraversalContext<V, NullOCRProvider>(
+        document: self,
+        visitor: visitor,
+        ocrProvider: nil
       )
       try await context.traverse()
 

@@ -11,10 +11,10 @@ import ZIPFoundation
 ///
 /// Maintains state during traversal including z-order indices for layering, hyperlink ranges
 /// for the current text storage, and list numbering across paragraphs.
-package final class TraversalContext {
+package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
   let document: IWorkDocument
-  let visitor: IWorkDocumentVisitor
-  let ocrProvider: OCRProvider?
+  let visitor: V
+  let ocrProvider: O?
 
   private var currentZOrderMap: OrderedDictionary<UInt64, Int> = [:]
   private var currentHyperlinks: [(range: Range<Int>, url: String)] = []
@@ -23,8 +23,8 @@ package final class TraversalContext {
 
   init(
     document: IWorkDocument,
-    visitor: IWorkDocumentVisitor,
-    ocrProvider: OCRProvider?
+    visitor: V,
+    ocrProvider: O?
   ) {
     self.document = document
     self.visitor = visitor

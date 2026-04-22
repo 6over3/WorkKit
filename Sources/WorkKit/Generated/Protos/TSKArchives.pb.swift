@@ -269,6 +269,15 @@ struct TSK_DocumentArchive: @unchecked Sendable {
   /// Clears the value of `useOptimizedTextVerticalAlignment`. Subsequent reads from it will return its default value.
   mutating func clearUseOptimizedTextVerticalAlignment() {_uniqueStorage()._useOptimizedTextVerticalAlignment = nil}
 
+  var formattingSymbols: TSK_FormattingSymbolsArchive {
+    get {return _storage._formattingSymbols ?? TSK_FormattingSymbolsArchive()}
+    set {_uniqueStorage()._formattingSymbols = newValue}
+  }
+  /// Returns true if `formattingSymbols` has been explicitly set.
+  var hasFormattingSymbols: Bool {return _storage._formattingSymbols != nil}
+  /// Clears the value of `formattingSymbols`. Subsequent reads from it will return its default value.
+  mutating func clearFormattingSymbols() {_uniqueStorage()._formattingSymbols = nil}
+
   var shouldAllowLigaturesInMinimallyTrackedText: Bool {
     get {return _storage._shouldAllowLigaturesInMinimallyTrackedText ?? false}
     set {_uniqueStorage()._shouldAllowLigaturesInMinimallyTrackedText = newValue}
@@ -278,14 +287,32 @@ struct TSK_DocumentArchive: @unchecked Sendable {
   /// Clears the value of `shouldAllowLigaturesInMinimallyTrackedText`. Subsequent reads from it will return its default value.
   mutating func clearShouldAllowLigaturesInMinimallyTrackedText() {_uniqueStorage()._shouldAllowLigaturesInMinimallyTrackedText = nil}
 
-  var formattingSymbols: TSK_FormattingSymbolsArchive {
-    get {return _storage._formattingSymbols ?? TSK_FormattingSymbolsArchive()}
-    set {_uniqueStorage()._formattingSymbols = newValue}
+  var isDocumentBasedOnPremiumTemplate: Bool {
+    get {return _storage._isDocumentBasedOnPremiumTemplate ?? false}
+    set {_uniqueStorage()._isDocumentBasedOnPremiumTemplate = newValue}
   }
-  /// Returns true if `formattingSymbols` has been explicitly set.
-  var hasFormattingSymbols: Bool {return _storage._formattingSymbols != nil}
-  /// Clears the value of `formattingSymbols`. Subsequent reads from it will return its default value.
-  mutating func clearFormattingSymbols() {_uniqueStorage()._formattingSymbols = nil}
+  /// Returns true if `isDocumentBasedOnPremiumTemplate` has been explicitly set.
+  var hasIsDocumentBasedOnPremiumTemplate: Bool {return _storage._isDocumentBasedOnPremiumTemplate != nil}
+  /// Clears the value of `isDocumentBasedOnPremiumTemplate`. Subsequent reads from it will return its default value.
+  mutating func clearIsDocumentBasedOnPremiumTemplate() {_uniqueStorage()._isDocumentBasedOnPremiumTemplate = nil}
+
+  var aiGeneratedContentProduceID: TSP_UUID {
+    get {return _storage._aiGeneratedContentProduceID ?? TSP_UUID()}
+    set {_uniqueStorage()._aiGeneratedContentProduceID = newValue}
+  }
+  /// Returns true if `aiGeneratedContentProduceID` has been explicitly set.
+  var hasAiGeneratedContentProduceID: Bool {return _storage._aiGeneratedContentProduceID != nil}
+  /// Clears the value of `aiGeneratedContentProduceID`. Subsequent reads from it will return its default value.
+  mutating func clearAiGeneratedContentProduceID() {_uniqueStorage()._aiGeneratedContentProduceID = nil}
+
+  var lastPremiumActivityTimestamp: Double {
+    get {return _storage._lastPremiumActivityTimestamp ?? 0}
+    set {_uniqueStorage()._lastPremiumActivityTimestamp = newValue}
+  }
+  /// Returns true if `lastPremiumActivityTimestamp` has been explicitly set.
+  var hasLastPremiumActivityTimestamp: Bool {return _storage._lastPremiumActivityTimestamp != nil}
+  /// Clears the value of `lastPremiumActivityTimestamp`. Subsequent reads from it will return its default value.
+  mutating func clearLastPremiumActivityTimestamp() {_uniqueStorage()._lastPremiumActivityTimestamp = nil}
 
   var activityStream: TSP_Reference {
     get {return _storage._activityStream ?? TSP_Reference()}
@@ -2183,6 +2210,47 @@ struct TSK_ChangeDocumentPackageTypeCommandArchive: Sendable {
   fileprivate var _oldPackageType: TSK_ChangeDocumentPackageTypeCommandArchive.PackageType? = nil
 }
 
+struct TSK_AIGeneratedContentCommandArchive: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var `super`: TSK_CommandArchive {
+    get {return _super ?? TSK_CommandArchive()}
+    set {_super = newValue}
+  }
+  /// Returns true if ``super`` has been explicitly set.
+  var hasSuper: Bool {return self._super != nil}
+  /// Clears the value of ``super``. Subsequent reads from it will return its default value.
+  mutating func clearSuper() {self._super = nil}
+
+  var aIGeneratedContentProduceID: TSP_UUID {
+    get {return _aIGeneratedContentProduceID ?? TSP_UUID()}
+    set {_aIGeneratedContentProduceID = newValue}
+  }
+  /// Returns true if `aIGeneratedContentProduceID` has been explicitly set.
+  var hasAIGeneratedContentProduceID: Bool {return self._aIGeneratedContentProduceID != nil}
+  /// Clears the value of `aIGeneratedContentProduceID`. Subsequent reads from it will return its default value.
+  mutating func clearAIGeneratedContentProduceID() {self._aIGeneratedContentProduceID = nil}
+
+  var oldAIGeneratedContentProduceID: TSP_UUID {
+    get {return _oldAIGeneratedContentProduceID ?? TSP_UUID()}
+    set {_oldAIGeneratedContentProduceID = newValue}
+  }
+  /// Returns true if `oldAIGeneratedContentProduceID` has been explicitly set.
+  var hasOldAIGeneratedContentProduceID: Bool {return self._oldAIGeneratedContentProduceID != nil}
+  /// Clears the value of `oldAIGeneratedContentProduceID`. Subsequent reads from it will return its default value.
+  mutating func clearOldAIGeneratedContentProduceID() {self._oldAIGeneratedContentProduceID = nil}
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _super: TSK_CommandArchive? = nil
+  fileprivate var _aIGeneratedContentProduceID: TSP_UUID? = nil
+  fileprivate var _oldAIGeneratedContentProduceID: TSP_UUID? = nil
+}
+
 struct TSK_RangeAddress: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -2832,6 +2900,37 @@ struct TSK_PencilAnnotationUIState: @unchecked Sendable {
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
+struct TSK_SetLastPremiumUserActivityTimestampCommandArchive: Sendable {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var newTimestamp: Double {
+    get {return _newTimestamp ?? 0}
+    set {_newTimestamp = newValue}
+  }
+  /// Returns true if `newTimestamp` has been explicitly set.
+  var hasNewTimestamp: Bool {return self._newTimestamp != nil}
+  /// Clears the value of `newTimestamp`. Subsequent reads from it will return its default value.
+  mutating func clearNewTimestamp() {self._newTimestamp = nil}
+
+  var oldTimestamp: Double {
+    get {return _oldTimestamp ?? 0}
+    set {_oldTimestamp = newValue}
+  }
+  /// Returns true if `oldTimestamp` has been explicitly set.
+  var hasOldTimestamp: Bool {return self._oldTimestamp != nil}
+  /// Clears the value of `oldTimestamp`. Subsequent reads from it will return its default value.
+  mutating func clearOldTimestamp() {self._oldTimestamp = nil}
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+
+  fileprivate var _newTimestamp: Double? = nil
+  fileprivate var _oldTimestamp: Double? = nil
+}
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "TSK"
@@ -3067,7 +3166,7 @@ extension TSK_LocalCommandHistory: SwiftProtobuf.Message, SwiftProtobuf._Message
 
 extension TSK_DocumentArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".DocumentArchive"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{4}\u{4}locale_identifier\0\u{4}\u{3}annotation_author_storage\0\u{3}activity_log_entries\0\u{3}creation_locale_identifier\0\u{3}prevent_image_conversion_on_open\0\u{3}has_floating_locale\0\u{3}has_user_defined_locale\0\u{4}\u{2}collaboration_operation_history\0\u{3}should_measure_negatively_tracked_text_correctly\0\u{3}use_optimized_text_vertical_alignment\0\u{3}formatting_symbols\0\u{3}should_allow_ligatures_in_minimally_tracked_text\0\u{4}u\u{2}activity_stream\0")
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{4}\u{4}locale_identifier\0\u{4}\u{3}annotation_author_storage\0\u{3}activity_log_entries\0\u{3}creation_locale_identifier\0\u{3}prevent_image_conversion_on_open\0\u{3}has_floating_locale\0\u{3}has_user_defined_locale\0\u{4}\u{2}collaboration_operation_history\0\u{3}should_measure_negatively_tracked_text_correctly\0\u{3}use_optimized_text_vertical_alignment\0\u{3}formatting_symbols\0\u{3}should_allow_ligatures_in_minimally_tracked_text\0\u{3}is_document_based_on_premium_template\0\u{3}ai_generated_content_produce_id\0\u{3}last_premium_activity_timestamp\0\u{4}r\u{2}activity_stream\0")
 
   fileprivate class _StorageClass {
     var _localeIdentifier: String? = nil
@@ -3080,8 +3179,11 @@ extension TSK_DocumentArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     var _collaborationOperationHistory: TSP_Reference? = nil
     var _shouldMeasureNegativelyTrackedTextCorrectly: Bool? = nil
     var _useOptimizedTextVerticalAlignment: Bool? = nil
-    var _shouldAllowLigaturesInMinimallyTrackedText: Bool? = nil
     var _formattingSymbols: TSK_FormattingSymbolsArchive? = nil
+    var _shouldAllowLigaturesInMinimallyTrackedText: Bool? = nil
+    var _isDocumentBasedOnPremiumTemplate: Bool? = nil
+    var _aiGeneratedContentProduceID: TSP_UUID? = nil
+    var _lastPremiumActivityTimestamp: Double? = nil
     var _activityStream: TSP_Reference? = nil
 
       // This property is used as the initial default value for new instances of the type.
@@ -3103,8 +3205,11 @@ extension TSK_DocumentArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       _collaborationOperationHistory = source._collaborationOperationHistory
       _shouldMeasureNegativelyTrackedTextCorrectly = source._shouldMeasureNegativelyTrackedTextCorrectly
       _useOptimizedTextVerticalAlignment = source._useOptimizedTextVerticalAlignment
-      _shouldAllowLigaturesInMinimallyTrackedText = source._shouldAllowLigaturesInMinimallyTrackedText
       _formattingSymbols = source._formattingSymbols
+      _shouldAllowLigaturesInMinimallyTrackedText = source._shouldAllowLigaturesInMinimallyTrackedText
+      _isDocumentBasedOnPremiumTemplate = source._isDocumentBasedOnPremiumTemplate
+      _aiGeneratedContentProduceID = source._aiGeneratedContentProduceID
+      _lastPremiumActivityTimestamp = source._lastPremiumActivityTimestamp
       _activityStream = source._activityStream
     }
   }
@@ -3122,6 +3227,7 @@ extension TSK_DocumentArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       if !SwiftProtobuf.Internal.areAllInitialized(_storage._activityLogEntries) {return false}
       if let v = _storage._collaborationOperationHistory, !v.isInitialized {return false}
       if let v = _storage._formattingSymbols, !v.isInitialized {return false}
+      if let v = _storage._aiGeneratedContentProduceID, !v.isInitialized {return false}
       if let v = _storage._activityStream, !v.isInitialized {return false}
       return true
     }
@@ -3147,6 +3253,9 @@ extension TSK_DocumentArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
         case 16: try { try decoder.decodeSingularBoolField(value: &_storage._useOptimizedTextVerticalAlignment) }()
         case 17: try { try decoder.decodeSingularMessageField(value: &_storage._formattingSymbols) }()
         case 18: try { try decoder.decodeSingularBoolField(value: &_storage._shouldAllowLigaturesInMinimallyTrackedText) }()
+        case 19: try { try decoder.decodeSingularBoolField(value: &_storage._isDocumentBasedOnPremiumTemplate) }()
+        case 20: try { try decoder.decodeSingularMessageField(value: &_storage._aiGeneratedContentProduceID) }()
+        case 21: try { try decoder.decodeSingularDoubleField(value: &_storage._lastPremiumActivityTimestamp) }()
         case 199: try { try decoder.decodeSingularMessageField(value: &_storage._activityStream) }()
         default: break
         }
@@ -3196,6 +3305,15 @@ extension TSK_DocumentArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
       try { if let v = _storage._shouldAllowLigaturesInMinimallyTrackedText {
         try visitor.visitSingularBoolField(value: v, fieldNumber: 18)
       } }()
+      try { if let v = _storage._isDocumentBasedOnPremiumTemplate {
+        try visitor.visitSingularBoolField(value: v, fieldNumber: 19)
+      } }()
+      try { if let v = _storage._aiGeneratedContentProduceID {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 20)
+      } }()
+      try { if let v = _storage._lastPremiumActivityTimestamp {
+        try visitor.visitSingularDoubleField(value: v, fieldNumber: 21)
+      } }()
       try { if let v = _storage._activityStream {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 199)
       } }()
@@ -3218,8 +3336,11 @@ extension TSK_DocumentArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
         if _storage._collaborationOperationHistory != rhs_storage._collaborationOperationHistory {return false}
         if _storage._shouldMeasureNegativelyTrackedTextCorrectly != rhs_storage._shouldMeasureNegativelyTrackedTextCorrectly {return false}
         if _storage._useOptimizedTextVerticalAlignment != rhs_storage._useOptimizedTextVerticalAlignment {return false}
-        if _storage._shouldAllowLigaturesInMinimallyTrackedText != rhs_storage._shouldAllowLigaturesInMinimallyTrackedText {return false}
         if _storage._formattingSymbols != rhs_storage._formattingSymbols {return false}
+        if _storage._shouldAllowLigaturesInMinimallyTrackedText != rhs_storage._shouldAllowLigaturesInMinimallyTrackedText {return false}
+        if _storage._isDocumentBasedOnPremiumTemplate != rhs_storage._isDocumentBasedOnPremiumTemplate {return false}
+        if _storage._aiGeneratedContentProduceID != rhs_storage._aiGeneratedContentProduceID {return false}
+        if _storage._lastPremiumActivityTimestamp != rhs_storage._lastPremiumActivityTimestamp {return false}
         if _storage._activityStream != rhs_storage._activityStream {return false}
         return true
       }
@@ -5633,6 +5754,58 @@ extension TSK_ChangeDocumentPackageTypeCommandArchive.PackageType: SwiftProtobuf
   static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0Default\0\u{1}Directory\0\u{1}SingleFile\0")
 }
 
+extension TSK_AIGeneratedContentCommandArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".AIGeneratedContentCommandArchive"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}super\0\u{3}a_i_generated_content_produce_id\0\u{3}old_a_i_generated_content_produce_id\0")
+
+  public var isInitialized: Bool {
+    if self._super == nil {return false}
+    if let v = self._super, !v.isInitialized {return false}
+    if let v = self._aIGeneratedContentProduceID, !v.isInitialized {return false}
+    if let v = self._oldAIGeneratedContentProduceID, !v.isInitialized {return false}
+    return true
+  }
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._super) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._aIGeneratedContentProduceID) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._oldAIGeneratedContentProduceID) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._super {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._aIGeneratedContentProduceID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._oldAIGeneratedContentProduceID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: TSK_AIGeneratedContentCommandArchive, rhs: TSK_AIGeneratedContentCommandArchive) -> Bool {
+    if lhs._super != rhs._super {return false}
+    if lhs._aIGeneratedContentProduceID != rhs._aIGeneratedContentProduceID {return false}
+    if lhs._oldAIGeneratedContentProduceID != rhs._oldAIGeneratedContentProduceID {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension TSK_RangeAddress: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".RangeAddress"
   static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}address_identifier\0\u{3}range_list\0")
@@ -6414,4 +6587,43 @@ extension TSK_PencilAnnotationUIState: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
 extension TSK_PencilAnnotationUIState.PencilAnnotationToolType: SwiftProtobuf._ProtoNameProviding {
   static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0Pen\0\u{1}Highlighter\0")
+}
+
+extension TSK_SetLastPremiumUserActivityTimestampCommandArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".SetLastPremiumUserActivityTimestampCommandArchive"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}new_timestamp\0\u{3}old_timestamp\0")
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularDoubleField(value: &self._newTimestamp) }()
+      case 2: try { try decoder.decodeSingularDoubleField(value: &self._oldTimestamp) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._newTimestamp {
+      try visitor.visitSingularDoubleField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._oldTimestamp {
+      try visitor.visitSingularDoubleField(value: v, fieldNumber: 2)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: TSK_SetLastPremiumUserActivityTimestampCommandArchive, rhs: TSK_SetLastPremiumUserActivityTimestampCommandArchive) -> Bool {
+    if lhs._newTimestamp != rhs._newTimestamp {return false}
+    if lhs._oldTimestamp != rhs._oldTimestamp {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
 }

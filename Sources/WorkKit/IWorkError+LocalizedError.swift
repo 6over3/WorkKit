@@ -9,8 +9,8 @@ extension IWorkError: LocalizedError {
   /// in user interfaces or error messages.
   public var errorDescription: String? {
     switch self {
-    case .fileNotFound(let path):
-      return "File not found at path: \(path)"
+    case .fileNotFound(let url):
+      return "File not found at path: \(url.path)"
 
     case .unknownDocumentType(let ext):
       return "Unknown document type for extension: \(ext)"

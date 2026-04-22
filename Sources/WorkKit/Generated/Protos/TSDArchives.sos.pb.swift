@@ -344,65 +344,61 @@ struct TSDSOS_SpecShadowArchive: @unchecked Sendable {
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
-struct TSDSOS_SpecStrokeArchive: Sendable {
+struct TSDSOS_SpecStrokeArchive: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   var specFrameSetAssetScale: TSD_SpecFrameSetAssetScaleArchive {
-    get {return _specFrameSetAssetScale ?? TSD_SpecFrameSetAssetScaleArchive()}
-    set {_specFrameSetAssetScale = newValue}
+    get {return _storage._specFrameSetAssetScale ?? TSD_SpecFrameSetAssetScaleArchive()}
+    set {_uniqueStorage()._specFrameSetAssetScale = newValue}
   }
   /// Returns true if `specFrameSetAssetScale` has been explicitly set.
-  var hasSpecFrameSetAssetScale: Bool {return self._specFrameSetAssetScale != nil}
+  var hasSpecFrameSetAssetScale: Bool {return _storage._specFrameSetAssetScale != nil}
   /// Clears the value of `specFrameSetAssetScale`. Subsequent reads from it will return its default value.
-  mutating func clearSpecFrameSetAssetScale() {self._specFrameSetAssetScale = nil}
+  mutating func clearSpecFrameSetAssetScale() {_uniqueStorage()._specFrameSetAssetScale = nil}
 
   var specSetStroke: TSDSOS_SpecSetStrokeArchive {
-    get {return _specSetStroke ?? TSDSOS_SpecSetStrokeArchive()}
-    set {_specSetStroke = newValue}
+    get {return _storage._specSetStroke ?? TSDSOS_SpecSetStrokeArchive()}
+    set {_uniqueStorage()._specSetStroke = newValue}
   }
   /// Returns true if `specSetStroke` has been explicitly set.
-  var hasSpecSetStroke: Bool {return self._specSetStroke != nil}
+  var hasSpecSetStroke: Bool {return _storage._specSetStroke != nil}
   /// Clears the value of `specSetStroke`. Subsequent reads from it will return its default value.
-  mutating func clearSpecSetStroke() {self._specSetStroke = nil}
+  mutating func clearSpecSetStroke() {_uniqueStorage()._specSetStroke = nil}
 
   var specStrokeSetColor: TSD_SpecStrokeSetColorArchive {
-    get {return _specStrokeSetColor ?? TSD_SpecStrokeSetColorArchive()}
-    set {_specStrokeSetColor = newValue}
+    get {return _storage._specStrokeSetColor ?? TSD_SpecStrokeSetColorArchive()}
+    set {_uniqueStorage()._specStrokeSetColor = newValue}
   }
   /// Returns true if `specStrokeSetColor` has been explicitly set.
-  var hasSpecStrokeSetColor: Bool {return self._specStrokeSetColor != nil}
+  var hasSpecStrokeSetColor: Bool {return _storage._specStrokeSetColor != nil}
   /// Clears the value of `specStrokeSetColor`. Subsequent reads from it will return its default value.
-  mutating func clearSpecStrokeSetColor() {self._specStrokeSetColor = nil}
+  mutating func clearSpecStrokeSetColor() {_uniqueStorage()._specStrokeSetColor = nil}
 
   var specStrokeSetPattern: TSD_SpecStrokeSetPatternArchive {
-    get {return _specStrokeSetPattern ?? TSD_SpecStrokeSetPatternArchive()}
-    set {_specStrokeSetPattern = newValue}
+    get {return _storage._specStrokeSetPattern ?? TSD_SpecStrokeSetPatternArchive()}
+    set {_uniqueStorage()._specStrokeSetPattern = newValue}
   }
   /// Returns true if `specStrokeSetPattern` has been explicitly set.
-  var hasSpecStrokeSetPattern: Bool {return self._specStrokeSetPattern != nil}
+  var hasSpecStrokeSetPattern: Bool {return _storage._specStrokeSetPattern != nil}
   /// Clears the value of `specStrokeSetPattern`. Subsequent reads from it will return its default value.
-  mutating func clearSpecStrokeSetPattern() {self._specStrokeSetPattern = nil}
+  mutating func clearSpecStrokeSetPattern() {_uniqueStorage()._specStrokeSetPattern = nil}
 
   var specStrokeSetWidth: TSD_SpecStrokeSetWidthArchive {
-    get {return _specStrokeSetWidth ?? TSD_SpecStrokeSetWidthArchive()}
-    set {_specStrokeSetWidth = newValue}
+    get {return _storage._specStrokeSetWidth ?? TSD_SpecStrokeSetWidthArchive()}
+    set {_uniqueStorage()._specStrokeSetWidth = newValue}
   }
   /// Returns true if `specStrokeSetWidth` has been explicitly set.
-  var hasSpecStrokeSetWidth: Bool {return self._specStrokeSetWidth != nil}
+  var hasSpecStrokeSetWidth: Bool {return _storage._specStrokeSetWidth != nil}
   /// Clears the value of `specStrokeSetWidth`. Subsequent reads from it will return its default value.
-  mutating func clearSpecStrokeSetWidth() {self._specStrokeSetWidth = nil}
+  mutating func clearSpecStrokeSetWidth() {_uniqueStorage()._specStrokeSetWidth = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
-  fileprivate var _specFrameSetAssetScale: TSD_SpecFrameSetAssetScaleArchive? = nil
-  fileprivate var _specSetStroke: TSDSOS_SpecSetStrokeArchive? = nil
-  fileprivate var _specStrokeSetColor: TSD_SpecStrokeSetColorArchive? = nil
-  fileprivate var _specStrokeSetPattern: TSD_SpecStrokeSetPatternArchive? = nil
-  fileprivate var _specStrokeSetWidth: TSD_SpecStrokeSetWidthArchive? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 struct TSDSOS_BaseShapeStylePropertyChangeSetArchive: @unchecked Sendable {
@@ -543,88 +539,95 @@ struct TSDSOS_BaseShapeStylePropertyChangeSetArchive: @unchecked Sendable {
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
-struct TSDSOS_MediaStylePropertyChangeSetArchive: @unchecked Sendable {
+struct TSDSOS_MediaStylePropertyChangeSetArchive: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   var stroke: TSDSOS_SpecStrokeArchive {
-    get {return _storage._stroke ?? TSDSOS_SpecStrokeArchive()}
-    set {_uniqueStorage()._stroke = newValue}
+    get {return _stroke ?? TSDSOS_SpecStrokeArchive()}
+    set {_stroke = newValue}
   }
   /// Returns true if `stroke` has been explicitly set.
-  var hasStroke: Bool {return _storage._stroke != nil}
+  var hasStroke: Bool {return self._stroke != nil}
   /// Clears the value of `stroke`. Subsequent reads from it will return its default value.
-  mutating func clearStroke() {_uniqueStorage()._stroke = nil}
+  mutating func clearStroke() {self._stroke = nil}
 
   var strokeUndefined: Bool {
-    get {return _storage._strokeUndefined ?? false}
-    set {_uniqueStorage()._strokeUndefined = newValue}
+    get {return _strokeUndefined ?? false}
+    set {_strokeUndefined = newValue}
   }
   /// Returns true if `strokeUndefined` has been explicitly set.
-  var hasStrokeUndefined: Bool {return _storage._strokeUndefined != nil}
+  var hasStrokeUndefined: Bool {return self._strokeUndefined != nil}
   /// Clears the value of `strokeUndefined`. Subsequent reads from it will return its default value.
-  mutating func clearStrokeUndefined() {_uniqueStorage()._strokeUndefined = nil}
+  mutating func clearStrokeUndefined() {self._strokeUndefined = nil}
 
   var opacity: TSSSOS_SpecDoubleArchive {
-    get {return _storage._opacity ?? TSSSOS_SpecDoubleArchive()}
-    set {_uniqueStorage()._opacity = newValue}
+    get {return _opacity ?? TSSSOS_SpecDoubleArchive()}
+    set {_opacity = newValue}
   }
   /// Returns true if `opacity` has been explicitly set.
-  var hasOpacity: Bool {return _storage._opacity != nil}
+  var hasOpacity: Bool {return self._opacity != nil}
   /// Clears the value of `opacity`. Subsequent reads from it will return its default value.
-  mutating func clearOpacity() {_uniqueStorage()._opacity = nil}
+  mutating func clearOpacity() {self._opacity = nil}
 
   var opacityUndefined: Bool {
-    get {return _storage._opacityUndefined ?? false}
-    set {_uniqueStorage()._opacityUndefined = newValue}
+    get {return _opacityUndefined ?? false}
+    set {_opacityUndefined = newValue}
   }
   /// Returns true if `opacityUndefined` has been explicitly set.
-  var hasOpacityUndefined: Bool {return _storage._opacityUndefined != nil}
+  var hasOpacityUndefined: Bool {return self._opacityUndefined != nil}
   /// Clears the value of `opacityUndefined`. Subsequent reads from it will return its default value.
-  mutating func clearOpacityUndefined() {_uniqueStorage()._opacityUndefined = nil}
+  mutating func clearOpacityUndefined() {self._opacityUndefined = nil}
 
   var shadow: TSDSOS_SpecShadowArchive {
-    get {return _storage._shadow ?? TSDSOS_SpecShadowArchive()}
-    set {_uniqueStorage()._shadow = newValue}
+    get {return _shadow ?? TSDSOS_SpecShadowArchive()}
+    set {_shadow = newValue}
   }
   /// Returns true if `shadow` has been explicitly set.
-  var hasShadow: Bool {return _storage._shadow != nil}
+  var hasShadow: Bool {return self._shadow != nil}
   /// Clears the value of `shadow`. Subsequent reads from it will return its default value.
-  mutating func clearShadow() {_uniqueStorage()._shadow = nil}
+  mutating func clearShadow() {self._shadow = nil}
 
   var shadowUndefined: Bool {
-    get {return _storage._shadowUndefined ?? false}
-    set {_uniqueStorage()._shadowUndefined = newValue}
+    get {return _shadowUndefined ?? false}
+    set {_shadowUndefined = newValue}
   }
   /// Returns true if `shadowUndefined` has been explicitly set.
-  var hasShadowUndefined: Bool {return _storage._shadowUndefined != nil}
+  var hasShadowUndefined: Bool {return self._shadowUndefined != nil}
   /// Clears the value of `shadowUndefined`. Subsequent reads from it will return its default value.
-  mutating func clearShadowUndefined() {_uniqueStorage()._shadowUndefined = nil}
+  mutating func clearShadowUndefined() {self._shadowUndefined = nil}
 
   var reflection: TSDSOS_SpecReflectionArchive {
-    get {return _storage._reflection ?? TSDSOS_SpecReflectionArchive()}
-    set {_uniqueStorage()._reflection = newValue}
+    get {return _reflection ?? TSDSOS_SpecReflectionArchive()}
+    set {_reflection = newValue}
   }
   /// Returns true if `reflection` has been explicitly set.
-  var hasReflection: Bool {return _storage._reflection != nil}
+  var hasReflection: Bool {return self._reflection != nil}
   /// Clears the value of `reflection`. Subsequent reads from it will return its default value.
-  mutating func clearReflection() {_uniqueStorage()._reflection = nil}
+  mutating func clearReflection() {self._reflection = nil}
 
   var reflectionUndefined: Bool {
-    get {return _storage._reflectionUndefined ?? false}
-    set {_uniqueStorage()._reflectionUndefined = newValue}
+    get {return _reflectionUndefined ?? false}
+    set {_reflectionUndefined = newValue}
   }
   /// Returns true if `reflectionUndefined` has been explicitly set.
-  var hasReflectionUndefined: Bool {return _storage._reflectionUndefined != nil}
+  var hasReflectionUndefined: Bool {return self._reflectionUndefined != nil}
   /// Clears the value of `reflectionUndefined`. Subsequent reads from it will return its default value.
-  mutating func clearReflectionUndefined() {_uniqueStorage()._reflectionUndefined = nil}
+  mutating func clearReflectionUndefined() {self._reflectionUndefined = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
-  fileprivate var _storage = _StorageClass.defaultInstance
+  fileprivate var _stroke: TSDSOS_SpecStrokeArchive? = nil
+  fileprivate var _strokeUndefined: Bool? = nil
+  fileprivate var _opacity: TSSSOS_SpecDoubleArchive? = nil
+  fileprivate var _opacityUndefined: Bool? = nil
+  fileprivate var _shadow: TSDSOS_SpecShadowArchive? = nil
+  fileprivate var _shadowUndefined: Bool? = nil
+  fileprivate var _reflection: TSDSOS_SpecReflectionArchive? = nil
+  fileprivate var _reflectionUndefined: Bool? = nil
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -1117,60 +1120,106 @@ extension TSDSOS_SpecStrokeArchive: SwiftProtobuf.Message, SwiftProtobuf._Messag
   static let protoMessageName: String = _protobuf_package + ".SpecStrokeArchive"
   static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}spec_frame_set_asset_scale\0\u{3}spec_set_stroke\0\u{3}spec_stroke_set_color\0\u{3}spec_stroke_set_pattern\0\u{3}spec_stroke_set_width\0")
 
+  fileprivate class _StorageClass {
+    var _specFrameSetAssetScale: TSD_SpecFrameSetAssetScaleArchive? = nil
+    var _specSetStroke: TSDSOS_SpecSetStrokeArchive? = nil
+    var _specStrokeSetColor: TSD_SpecStrokeSetColorArchive? = nil
+    var _specStrokeSetPattern: TSD_SpecStrokeSetPatternArchive? = nil
+    var _specStrokeSetWidth: TSD_SpecStrokeSetWidthArchive? = nil
+
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _specFrameSetAssetScale = source._specFrameSetAssetScale
+      _specSetStroke = source._specSetStroke
+      _specStrokeSetColor = source._specStrokeSetColor
+      _specStrokeSetPattern = source._specStrokeSetPattern
+      _specStrokeSetWidth = source._specStrokeSetWidth
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   public var isInitialized: Bool {
-    if let v = self._specFrameSetAssetScale, !v.isInitialized {return false}
-    if let v = self._specSetStroke, !v.isInitialized {return false}
-    if let v = self._specStrokeSetColor, !v.isInitialized {return false}
-    if let v = self._specStrokeSetPattern, !v.isInitialized {return false}
-    if let v = self._specStrokeSetWidth, !v.isInitialized {return false}
-    return true
+    return withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      if let v = _storage._specFrameSetAssetScale, !v.isInitialized {return false}
+      if let v = _storage._specSetStroke, !v.isInitialized {return false}
+      if let v = _storage._specStrokeSetColor, !v.isInitialized {return false}
+      if let v = _storage._specStrokeSetPattern, !v.isInitialized {return false}
+      if let v = _storage._specStrokeSetWidth, !v.isInitialized {return false}
+      return true
+    }
   }
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._specFrameSetAssetScale) }()
-      case 2: try { try decoder.decodeSingularMessageField(value: &self._specSetStroke) }()
-      case 3: try { try decoder.decodeSingularMessageField(value: &self._specStrokeSetColor) }()
-      case 4: try { try decoder.decodeSingularMessageField(value: &self._specStrokeSetPattern) }()
-      case 5: try { try decoder.decodeSingularMessageField(value: &self._specStrokeSetWidth) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._specFrameSetAssetScale) }()
+        case 2: try { try decoder.decodeSingularMessageField(value: &_storage._specSetStroke) }()
+        case 3: try { try decoder.decodeSingularMessageField(value: &_storage._specStrokeSetColor) }()
+        case 4: try { try decoder.decodeSingularMessageField(value: &_storage._specStrokeSetPattern) }()
+        case 5: try { try decoder.decodeSingularMessageField(value: &_storage._specStrokeSetWidth) }()
+        default: break
+        }
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._specFrameSetAssetScale {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    } }()
-    try { if let v = self._specSetStroke {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    } }()
-    try { if let v = self._specStrokeSetColor {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    } }()
-    try { if let v = self._specStrokeSetPattern {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    } }()
-    try { if let v = self._specStrokeSetWidth {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-    } }()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      try { if let v = _storage._specFrameSetAssetScale {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      } }()
+      try { if let v = _storage._specSetStroke {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      } }()
+      try { if let v = _storage._specStrokeSetColor {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+      } }()
+      try { if let v = _storage._specStrokeSetPattern {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+      } }()
+      try { if let v = _storage._specStrokeSetWidth {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+      } }()
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: TSDSOS_SpecStrokeArchive, rhs: TSDSOS_SpecStrokeArchive) -> Bool {
-    if lhs._specFrameSetAssetScale != rhs._specFrameSetAssetScale {return false}
-    if lhs._specSetStroke != rhs._specSetStroke {return false}
-    if lhs._specStrokeSetColor != rhs._specStrokeSetColor {return false}
-    if lhs._specStrokeSetPattern != rhs._specStrokeSetPattern {return false}
-    if lhs._specStrokeSetWidth != rhs._specStrokeSetWidth {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._specFrameSetAssetScale != rhs_storage._specFrameSetAssetScale {return false}
+        if _storage._specSetStroke != rhs_storage._specSetStroke {return false}
+        if _storage._specStrokeSetColor != rhs_storage._specStrokeSetColor {return false}
+        if _storage._specStrokeSetPattern != rhs_storage._specStrokeSetPattern {return false}
+        if _storage._specStrokeSetWidth != rhs_storage._specStrokeSetWidth {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1354,126 +1403,74 @@ extension TSDSOS_MediaStylePropertyChangeSetArchive: SwiftProtobuf.Message, Swif
   static let protoMessageName: String = _protobuf_package + ".MediaStylePropertyChangeSetArchive"
   static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}stroke\0\u{3}stroke_undefined\0\u{1}opacity\0\u{3}opacity_undefined\0\u{1}shadow\0\u{3}shadow_undefined\0\u{1}reflection\0\u{3}reflection_undefined\0")
 
-  fileprivate class _StorageClass {
-    var _stroke: TSDSOS_SpecStrokeArchive? = nil
-    var _strokeUndefined: Bool? = nil
-    var _opacity: TSSSOS_SpecDoubleArchive? = nil
-    var _opacityUndefined: Bool? = nil
-    var _shadow: TSDSOS_SpecShadowArchive? = nil
-    var _shadowUndefined: Bool? = nil
-    var _reflection: TSDSOS_SpecReflectionArchive? = nil
-    var _reflectionUndefined: Bool? = nil
-
-      // This property is used as the initial default value for new instances of the type.
-      // The type itself is protecting the reference to its storage via CoW semantics.
-      // This will force a copy to be made of this reference when the first mutation occurs;
-      // hence, it is safe to mark this as `nonisolated(unsafe)`.
-      static nonisolated(unsafe) let defaultInstance = _StorageClass()
-
-    private init() {}
-
-    init(copying source: _StorageClass) {
-      _stroke = source._stroke
-      _strokeUndefined = source._strokeUndefined
-      _opacity = source._opacity
-      _opacityUndefined = source._opacityUndefined
-      _shadow = source._shadow
-      _shadowUndefined = source._shadowUndefined
-      _reflection = source._reflection
-      _reflectionUndefined = source._reflectionUndefined
-    }
-  }
-
-  fileprivate mutating func _uniqueStorage() -> _StorageClass {
-    if !isKnownUniquelyReferenced(&_storage) {
-      _storage = _StorageClass(copying: _storage)
-    }
-    return _storage
-  }
-
   public var isInitialized: Bool {
-    return withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      if let v = _storage._stroke, !v.isInitialized {return false}
-      if let v = _storage._opacity, !v.isInitialized {return false}
-      if let v = _storage._shadow, !v.isInitialized {return false}
-      if let v = _storage._reflection, !v.isInitialized {return false}
-      return true
-    }
+    if let v = self._stroke, !v.isInitialized {return false}
+    if let v = self._opacity, !v.isInitialized {return false}
+    if let v = self._shadow, !v.isInitialized {return false}
+    if let v = self._reflection, !v.isInitialized {return false}
+    return true
   }
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    _ = _uniqueStorage()
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      while let fieldNumber = try decoder.nextFieldNumber() {
-        // The use of inline closures is to circumvent an issue where the compiler
-        // allocates stack space for every case branch when no optimizations are
-        // enabled. https://github.com/apple/swift-protobuf/issues/1034
-        switch fieldNumber {
-        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._stroke) }()
-        case 2: try { try decoder.decodeSingularBoolField(value: &_storage._strokeUndefined) }()
-        case 3: try { try decoder.decodeSingularMessageField(value: &_storage._opacity) }()
-        case 4: try { try decoder.decodeSingularBoolField(value: &_storage._opacityUndefined) }()
-        case 5: try { try decoder.decodeSingularMessageField(value: &_storage._shadow) }()
-        case 6: try { try decoder.decodeSingularBoolField(value: &_storage._shadowUndefined) }()
-        case 7: try { try decoder.decodeSingularMessageField(value: &_storage._reflection) }()
-        case 8: try { try decoder.decodeSingularBoolField(value: &_storage._reflectionUndefined) }()
-        default: break
-        }
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._stroke) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self._strokeUndefined) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._opacity) }()
+      case 4: try { try decoder.decodeSingularBoolField(value: &self._opacityUndefined) }()
+      case 5: try { try decoder.decodeSingularMessageField(value: &self._shadow) }()
+      case 6: try { try decoder.decodeSingularBoolField(value: &self._shadowUndefined) }()
+      case 7: try { try decoder.decodeSingularMessageField(value: &self._reflection) }()
+      case 8: try { try decoder.decodeSingularBoolField(value: &self._reflectionUndefined) }()
+      default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every if/case branch local when no optimizations
-      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-      // https://github.com/apple/swift-protobuf/issues/1182
-      try { if let v = _storage._stroke {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-      } }()
-      try { if let v = _storage._strokeUndefined {
-        try visitor.visitSingularBoolField(value: v, fieldNumber: 2)
-      } }()
-      try { if let v = _storage._opacity {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-      } }()
-      try { if let v = _storage._opacityUndefined {
-        try visitor.visitSingularBoolField(value: v, fieldNumber: 4)
-      } }()
-      try { if let v = _storage._shadow {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-      } }()
-      try { if let v = _storage._shadowUndefined {
-        try visitor.visitSingularBoolField(value: v, fieldNumber: 6)
-      } }()
-      try { if let v = _storage._reflection {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-      } }()
-      try { if let v = _storage._reflectionUndefined {
-        try visitor.visitSingularBoolField(value: v, fieldNumber: 8)
-      } }()
-    }
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._stroke {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._strokeUndefined {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._opacity {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._opacityUndefined {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 4)
+    } }()
+    try { if let v = self._shadow {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    } }()
+    try { if let v = self._shadowUndefined {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 6)
+    } }()
+    try { if let v = self._reflection {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    } }()
+    try { if let v = self._reflectionUndefined {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 8)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: TSDSOS_MediaStylePropertyChangeSetArchive, rhs: TSDSOS_MediaStylePropertyChangeSetArchive) -> Bool {
-    if lhs._storage !== rhs._storage {
-      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
-        let _storage = _args.0
-        let rhs_storage = _args.1
-        if _storage._stroke != rhs_storage._stroke {return false}
-        if _storage._strokeUndefined != rhs_storage._strokeUndefined {return false}
-        if _storage._opacity != rhs_storage._opacity {return false}
-        if _storage._opacityUndefined != rhs_storage._opacityUndefined {return false}
-        if _storage._shadow != rhs_storage._shadow {return false}
-        if _storage._shadowUndefined != rhs_storage._shadowUndefined {return false}
-        if _storage._reflection != rhs_storage._reflection {return false}
-        if _storage._reflectionUndefined != rhs_storage._reflectionUndefined {return false}
-        return true
-      }
-      if !storagesAreEqual {return false}
-    }
+    if lhs._stroke != rhs._stroke {return false}
+    if lhs._strokeUndefined != rhs._strokeUndefined {return false}
+    if lhs._opacity != rhs._opacity {return false}
+    if lhs._opacityUndefined != rhs._opacityUndefined {return false}
+    if lhs._shadow != rhs._shadow {return false}
+    if lhs._shadowUndefined != rhs._shadowUndefined {return false}
+    if lhs._reflection != rhs._reflection {return false}
+    if lhs._reflectionUndefined != rhs._reflectionUndefined {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

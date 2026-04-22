@@ -1,3 +1,5 @@
+import Foundation
+
 // MARK: - Errors
 
 /// Errors that can occur while parsing or processing iWork documents.
@@ -9,7 +11,7 @@
 ///
 /// ### File and Document Errors
 ///
-/// - ``fileNotFound(path:)``
+/// - ``fileNotFound(url:)``
 /// - ``unknownDocumentType(extension:)``
 /// - ``missingIndexArchive```
 /// - ``documentTypeMismatch(expected:found:)```
@@ -40,8 +42,8 @@ public enum IWorkError: Error, Sendable, Equatable {
   /// This error is thrown when attempting to open a document at a path that
   /// does not exist on the filesystem.
   ///
-  /// - Parameter path: The file path that was not found.
-  case fileNotFound(path: String)
+  /// - Parameter url: The file URL that was not found.
+  case fileNotFound(url: URL)
 
   /// The document type could not be determined from the file extension.
   ///

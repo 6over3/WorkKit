@@ -299,6 +299,33 @@ struct TSS_StylesheetArchive: @unchecked Sendable {
   /// Clears the value of `stylesFor144`. Subsequent reads from it will return its default value.
   mutating func clearStylesFor144() {_uniqueStorage()._stylesFor144 = nil}
 
+  var stylesForAccidental150: TSS_StylesheetArchive.VersionedStyles {
+    get {return _storage._stylesForAccidental150 ?? TSS_StylesheetArchive.VersionedStyles()}
+    set {_uniqueStorage()._stylesForAccidental150 = newValue}
+  }
+  /// Returns true if `stylesForAccidental150` has been explicitly set.
+  var hasStylesForAccidental150: Bool {return _storage._stylesForAccidental150 != nil}
+  /// Clears the value of `stylesForAccidental150`. Subsequent reads from it will return its default value.
+  mutating func clearStylesForAccidental150() {_uniqueStorage()._stylesForAccidental150 = nil}
+
+  var stylesFor151: TSS_StylesheetArchive.VersionedStyles {
+    get {return _storage._stylesFor151 ?? TSS_StylesheetArchive.VersionedStyles()}
+    set {_uniqueStorage()._stylesFor151 = newValue}
+  }
+  /// Returns true if `stylesFor151` has been explicitly set.
+  var hasStylesFor151: Bool {return _storage._stylesFor151 != nil}
+  /// Clears the value of `stylesFor151`. Subsequent reads from it will return its default value.
+  mutating func clearStylesFor151() {_uniqueStorage()._stylesFor151 = nil}
+
+  var stylesFor152: TSS_StylesheetArchive.VersionedStyles {
+    get {return _storage._stylesFor152 ?? TSS_StylesheetArchive.VersionedStyles()}
+    set {_uniqueStorage()._stylesFor152 = newValue}
+  }
+  /// Returns true if `stylesFor152` has been explicitly set.
+  var hasStylesFor152: Bool {return _storage._stylesFor152 != nil}
+  /// Clears the value of `stylesFor152`. Subsequent reads from it will return its default value.
+  mutating func clearStylesFor152() {_uniqueStorage()._stylesFor152 = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   struct IdentifiedStyleEntry: Sendable {
@@ -1122,7 +1149,7 @@ extension TSS_StyleArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
 
 extension TSS_StylesheetArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".StylesheetArchive"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}styles\0\u{3}identifier_to_style_map\0\u{1}parent\0\u{3}is_locked\0\u{3}parent_to_children_style_map\0\u{3}can_cull_styles\0\u{3}styles_for_10_0\0\u{3}styles_for_10_1\0\u{3}styles_for_10_2\0\u{3}styles_for_11_0\0\u{3}styles_for_11_1\0\u{3}styles_for_11_2\0\u{3}styles_for_12_0\0\u{3}styles_for_12_1\0\u{3}styles_for_12_2\0\u{3}styles_for_13_0\0\u{3}styles_for_13_1\0\u{3}styles_for_13_2\0\u{3}styles_for_14_0\0\u{3}styles_for_14_1\0\u{3}styles_for_14_2\0\u{3}styles_for_14_4\0")
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}styles\0\u{3}identifier_to_style_map\0\u{1}parent\0\u{3}is_locked\0\u{3}parent_to_children_style_map\0\u{3}can_cull_styles\0\u{3}styles_for_10_0\0\u{3}styles_for_10_1\0\u{3}styles_for_10_2\0\u{3}styles_for_11_0\0\u{3}styles_for_11_1\0\u{3}styles_for_11_2\0\u{3}styles_for_12_0\0\u{3}styles_for_12_1\0\u{3}styles_for_12_2\0\u{3}styles_for_13_0\0\u{3}styles_for_13_1\0\u{3}styles_for_13_2\0\u{3}styles_for_14_0\0\u{3}styles_for_14_1\0\u{3}styles_for_14_2\0\u{3}styles_for_14_4\0\u{3}styles_for_accidental_15_0\0\u{3}styles_for_15_1\0\u{3}styles_for_15_2\0")
 
   fileprivate class _StorageClass {
     var _styles: [TSP_Reference] = []
@@ -1147,6 +1174,9 @@ extension TSS_StylesheetArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _stylesFor141: TSS_StylesheetArchive.VersionedStyles? = nil
     var _stylesFor142: TSS_StylesheetArchive.VersionedStyles? = nil
     var _stylesFor144: TSS_StylesheetArchive.VersionedStyles? = nil
+    var _stylesForAccidental150: TSS_StylesheetArchive.VersionedStyles? = nil
+    var _stylesFor151: TSS_StylesheetArchive.VersionedStyles? = nil
+    var _stylesFor152: TSS_StylesheetArchive.VersionedStyles? = nil
 
       // This property is used as the initial default value for new instances of the type.
       // The type itself is protecting the reference to its storage via CoW semantics.
@@ -1179,6 +1209,9 @@ extension TSS_StylesheetArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       _stylesFor141 = source._stylesFor141
       _stylesFor142 = source._stylesFor142
       _stylesFor144 = source._stylesFor144
+      _stylesForAccidental150 = source._stylesForAccidental150
+      _stylesFor151 = source._stylesFor151
+      _stylesFor152 = source._stylesFor152
     }
   }
 
@@ -1211,6 +1244,9 @@ extension TSS_StylesheetArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       if let v = _storage._stylesFor141, !v.isInitialized {return false}
       if let v = _storage._stylesFor142, !v.isInitialized {return false}
       if let v = _storage._stylesFor144, !v.isInitialized {return false}
+      if let v = _storage._stylesForAccidental150, !v.isInitialized {return false}
+      if let v = _storage._stylesFor151, !v.isInitialized {return false}
+      if let v = _storage._stylesFor152, !v.isInitialized {return false}
       return true
     }
   }
@@ -1245,6 +1281,9 @@ extension TSS_StylesheetArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         case 20: try { try decoder.decodeSingularMessageField(value: &_storage._stylesFor141) }()
         case 21: try { try decoder.decodeSingularMessageField(value: &_storage._stylesFor142) }()
         case 22: try { try decoder.decodeSingularMessageField(value: &_storage._stylesFor144) }()
+        case 23: try { try decoder.decodeSingularMessageField(value: &_storage._stylesForAccidental150) }()
+        case 24: try { try decoder.decodeSingularMessageField(value: &_storage._stylesFor151) }()
+        case 25: try { try decoder.decodeSingularMessageField(value: &_storage._stylesFor152) }()
         default: break
         }
       }
@@ -1323,6 +1362,15 @@ extension TSS_StylesheetArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       try { if let v = _storage._stylesFor144 {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 22)
       } }()
+      try { if let v = _storage._stylesForAccidental150 {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 23)
+      } }()
+      try { if let v = _storage._stylesFor151 {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 24)
+      } }()
+      try { if let v = _storage._stylesFor152 {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 25)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -1354,6 +1402,9 @@ extension TSS_StylesheetArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
         if _storage._stylesFor141 != rhs_storage._stylesFor141 {return false}
         if _storage._stylesFor142 != rhs_storage._stylesFor142 {return false}
         if _storage._stylesFor144 != rhs_storage._stylesFor144 {return false}
+        if _storage._stylesForAccidental150 != rhs_storage._stylesForAccidental150 {return false}
+        if _storage._stylesFor151 != rhs_storage._stylesFor151 {return false}
+        if _storage._stylesFor152 != rhs_storage._stylesFor152 {return false}
         return true
       }
       if !storagesAreEqual {return false}

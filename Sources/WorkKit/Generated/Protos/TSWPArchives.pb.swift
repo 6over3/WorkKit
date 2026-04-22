@@ -3866,6 +3866,15 @@ struct TSWP_ShapeInfoArchive: Sendable {
   /// Clears the value of `isTextBox`. Subsequent reads from it will return its default value.
   mutating func clearIsTextBox() {self._isTextBox = nil}
 
+  var autogrowsForLocalization: Bool {
+    get {return _autogrowsForLocalization ?? false}
+    set {_autogrowsForLocalization = newValue}
+  }
+  /// Returns true if `autogrowsForLocalization` has been explicitly set.
+  var hasAutogrowsForLocalization: Bool {return self._autogrowsForLocalization != nil}
+  /// Clears the value of `autogrowsForLocalization`. Subsequent reads from it will return its default value.
+  mutating func clearAutogrowsForLocalization() {self._autogrowsForLocalization = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -3875,6 +3884,7 @@ struct TSWP_ShapeInfoArchive: Sendable {
   fileprivate var _textFlow: TSP_Reference? = nil
   fileprivate var _ownedStorage: TSP_Reference? = nil
   fileprivate var _isTextBox: Bool? = nil
+  fileprivate var _autogrowsForLocalization: Bool? = nil
 }
 
 struct TSWP_CommentInfoArchive: Sendable {
@@ -4663,6 +4673,24 @@ struct TSWP_DateTimeSmartFieldArchive: Sendable {
   /// Clears the value of `date`. Subsequent reads from it will return its default value.
   mutating func clearDate() {self._date = nil}
 
+  var incrementsDateByYear: Bool {
+    get {return _incrementsDateByYear ?? false}
+    set {_incrementsDateByYear = newValue}
+  }
+  /// Returns true if `incrementsDateByYear` has been explicitly set.
+  var hasIncrementsDateByYear: Bool {return self._incrementsDateByYear != nil}
+  /// Clears the value of `incrementsDateByYear`. Subsequent reads from it will return its default value.
+  mutating func clearIncrementsDateByYear() {self._incrementsDateByYear = nil}
+
+  var customFormat: TSWP_DateTimeSmartFieldArchive.DateTimeCustomFormat {
+    get {return _customFormat ?? .kDateTimeCustomFormatNone}
+    set {_customFormat = newValue}
+  }
+  /// Returns true if `customFormat` has been explicitly set.
+  var hasCustomFormat: Bool {return self._customFormat != nil}
+  /// Clears the value of `customFormat`. Subsequent reads from it will return its default value.
+  mutating func clearCustomFormat() {self._customFormat = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum DateTimeUpdatePlan: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
@@ -4689,6 +4717,16 @@ struct TSWP_DateTimeSmartFieldArchive: Sendable {
 
   }
 
+  enum DateTimeCustomFormat: Int, SwiftProtobuf.Enum, Swift.CaseIterable {
+    case kDateTimeCustomFormatNone = 0
+    case kDateTimeCustomFormatYear = 1
+
+    init() {
+      self = .kDateTimeCustomFormatNone
+    }
+
+  }
+
   init() {}
 
   fileprivate var _super: TSWP_SmartFieldArchive? = nil
@@ -4699,6 +4737,8 @@ struct TSWP_DateTimeSmartFieldArchive: Sendable {
   fileprivate var _updatePlan: TSWP_DateTimeSmartFieldArchive.DateTimeUpdatePlan? = nil
   fileprivate var _needsUpdate: Bool? = nil
   fileprivate var _date: TSP_Date? = nil
+  fileprivate var _incrementsDateByYear: Bool? = nil
+  fileprivate var _customFormat: TSWP_DateTimeSmartFieldArchive.DateTimeCustomFormat? = nil
 }
 
 struct TSWP_BookmarkFieldArchive: Sendable {
@@ -10135,7 +10175,7 @@ extension TSWP_UndoTransactionWrapperArchive: SwiftProtobuf.Message, SwiftProtob
 
 extension TSWP_ShapeInfoArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".ShapeInfoArchive"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}super\0\u{3}deprecated_storage\0\u{3}text_flow\0\u{3}owned_storage\0\u{4}\u{2}is_text_box\0")
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}super\0\u{3}deprecated_storage\0\u{3}text_flow\0\u{3}owned_storage\0\u{4}\u{2}is_text_box\0\u{3}autogrows_for_localization\0")
 
   public var isInitialized: Bool {
     if self._super == nil {return false}
@@ -10157,6 +10197,7 @@ extension TSWP_ShapeInfoArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case 3: try { try decoder.decodeSingularMessageField(value: &self._textFlow) }()
       case 4: try { try decoder.decodeSingularMessageField(value: &self._ownedStorage) }()
       case 6: try { try decoder.decodeSingularBoolField(value: &self._isTextBox) }()
+      case 7: try { try decoder.decodeSingularBoolField(value: &self._autogrowsForLocalization) }()
       default: break
       }
     }
@@ -10182,6 +10223,9 @@ extension TSWP_ShapeInfoArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     try { if let v = self._isTextBox {
       try visitor.visitSingularBoolField(value: v, fieldNumber: 6)
     } }()
+    try { if let v = self._autogrowsForLocalization {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 7)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -10191,6 +10235,7 @@ extension TSWP_ShapeInfoArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     if lhs._textFlow != rhs._textFlow {return false}
     if lhs._ownedStorage != rhs._ownedStorage {return false}
     if lhs._isTextBox != rhs._isTextBox {return false}
+    if lhs._autogrowsForLocalization != rhs._autogrowsForLocalization {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -11063,7 +11108,7 @@ extension TSWP_CitationSmartFieldArchive: SwiftProtobuf.Message, SwiftProtobuf._
 
 extension TSWP_DateTimeSmartFieldArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".DateTimeSmartFieldArchive"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}super\0\u{1}format\0\u{3}locale_identifier\0\u{3}date_style\0\u{3}time_style\0\u{3}update_plan\0\u{3}needs_update\0\u{1}date\0")
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{1}super\0\u{1}format\0\u{3}locale_identifier\0\u{3}date_style\0\u{3}time_style\0\u{3}update_plan\0\u{3}needs_update\0\u{1}date\0\u{3}increments_date_by_year\0\u{3}custom_format\0")
 
   public var isInitialized: Bool {
     if let v = self._date, !v.isInitialized {return false}
@@ -11084,6 +11129,8 @@ extension TSWP_DateTimeSmartFieldArchive: SwiftProtobuf.Message, SwiftProtobuf._
       case 6: try { try decoder.decodeSingularEnumField(value: &self._updatePlan) }()
       case 7: try { try decoder.decodeSingularBoolField(value: &self._needsUpdate) }()
       case 8: try { try decoder.decodeSingularMessageField(value: &self._date) }()
+      case 9: try { try decoder.decodeSingularBoolField(value: &self._incrementsDateByYear) }()
+      case 10: try { try decoder.decodeSingularEnumField(value: &self._customFormat) }()
       default: break
       }
     }
@@ -11118,6 +11165,12 @@ extension TSWP_DateTimeSmartFieldArchive: SwiftProtobuf.Message, SwiftProtobuf._
     try { if let v = self._date {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
     } }()
+    try { if let v = self._incrementsDateByYear {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 9)
+    } }()
+    try { if let v = self._customFormat {
+      try visitor.visitSingularEnumField(value: v, fieldNumber: 10)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -11130,6 +11183,8 @@ extension TSWP_DateTimeSmartFieldArchive: SwiftProtobuf.Message, SwiftProtobuf._
     if lhs._updatePlan != rhs._updatePlan {return false}
     if lhs._needsUpdate != rhs._needsUpdate {return false}
     if lhs._date != rhs._date {return false}
+    if lhs._incrementsDateByYear != rhs._incrementsDateByYear {return false}
+    if lhs._customFormat != rhs._customFormat {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -11141,6 +11196,10 @@ extension TSWP_DateTimeSmartFieldArchive.DateTimeUpdatePlan: SwiftProtobuf._Prot
 
 extension TSWP_DateTimeSmartFieldArchive.DateTimeFormatterStyle: SwiftProtobuf._ProtoNameProviding {
   static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0kDateTimeFormatterStyleNone\0\u{1}kDateTimeFormatterStyleShort\0\u{1}kDateTimeFormatterStyleMedium\0\u{1}kDateTimeFormatterStyleLong\0\u{1}kDateTimeFormatterStyleFull\0")
+}
+
+extension TSWP_DateTimeSmartFieldArchive.DateTimeCustomFormat: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{2}\0kDateTimeCustomFormatNone\0\u{1}kDateTimeCustomFormatYear\0")
 }
 
 extension TSWP_BookmarkFieldArchive: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {

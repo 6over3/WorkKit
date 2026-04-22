@@ -1,0 +1,44 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:iworkkit}",
+            "name": "Debug iwx",
+            "target": "iwx",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug iwx"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:iworkkit}",
+            "name": "Release iwx",
+            "target": "iwx",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release iwx"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:iworkkit}",
+            "name": "Debug proto-dump",
+            "target": "proto-dump",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug proto-dump"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:iworkkit}",
+            "name": "Release proto-dump",
+            "target": "proto-dump",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release proto-dump"
+        }
+    ]
+}

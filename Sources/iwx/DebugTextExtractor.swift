@@ -8,11 +8,11 @@ import WorkKit
 ///
 /// This visitor includes detailed metadata about document structure,
 /// positioning, and formatting for debugging purposes.
-public final class DebugTextExtractor: IWorkDocumentVisitor, @unchecked Sendable {
+public final class DebugTextExtractor<O: OCRProvider>: IWorkDocumentVisitor, @unchecked Sendable {
   private var buffer: String = ""
   private var indentLevel: Int = 0
   private var document: IWorkDocument
-  private var ocrProvider: OCRProvider?
+  private var ocrProvider: O?
 
   /// Context for where an inline element is being logged
   private enum LogContext {
@@ -26,13 +26,17 @@ public final class DebugTextExtractor: IWorkDocumentVisitor, @unchecked Sendable
     buffer
   }
 
-  public init(using document: IWorkDocument, with ocrProvider: OCRProvider? = nil) {
+  public init(using document: IWorkDocument, with ocrProvider: O? = nil) {
     self.document = document
     self.ocrProvider = ocrProvider
   }
 
   public func accept() async throws {
-    try await document.accept(visitor: self, ocrProvider: ocrProvider)
+    if let ocrProvider {
+      try await document.accept(visitor: self, ocrProvider: ocrProvider)
+    } else {
+      try await document.accept(visitor: self)
+    }
   }
 
   // MARK: - Basic Logging Utilities

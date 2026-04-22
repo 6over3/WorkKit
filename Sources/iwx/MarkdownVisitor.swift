@@ -6,7 +6,7 @@ import CoreGraphics
 import ImageIO
 import UniformTypeIdentifiers
 
-public final class MarkdownVisitor: IWorkDocumentVisitor, @unchecked Sendable {
+public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unchecked Sendable {
 
   public struct Configuration {
     public var outputDirectory: String?
@@ -23,7 +23,7 @@ public final class MarkdownVisitor: IWorkDocumentVisitor, @unchecked Sendable {
 
   private var buffer: String = ""
   private var document: IWorkDocument
-  private var ocrProvider: OCRProvider?
+  private var ocrProvider: O?
   private let configuration: Configuration
 
   private var inList = false
@@ -60,7 +60,7 @@ public final class MarkdownVisitor: IWorkDocumentVisitor, @unchecked Sendable {
 
   public init(
     using document: IWorkDocument,
-    with ocrProvider: OCRProvider? = nil
+    with ocrProvider: O? = nil
   ) {
     self.document = document
     self.ocrProvider = ocrProvider
@@ -70,7 +70,7 @@ public final class MarkdownVisitor: IWorkDocumentVisitor, @unchecked Sendable {
   public init(
     using document: IWorkDocument,
     configuration: Configuration = Configuration(),
-    with ocrProvider: OCRProvider? = nil
+    with ocrProvider: O? = nil
   ) {
     self.document = document
     self.ocrProvider = ocrProvider
@@ -78,7 +78,11 @@ public final class MarkdownVisitor: IWorkDocumentVisitor, @unchecked Sendable {
   }
 
   public func accept() async throws {
-    try await document.accept(visitor: self, ocrProvider: ocrProvider)
+    if let ocrProvider {
+      try await document.accept(visitor: self, ocrProvider: ocrProvider)
+    } else {
+      try await document.accept(visitor: self)
+    }
   }
 
   public func willVisitDocument(

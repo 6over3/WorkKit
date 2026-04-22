@@ -4,51 +4,22 @@ import ZIPFoundation
 
 // MARK: - Document Parser
 
-/// Parser for iWork document files.
-///
-/// `IWorkParser` provides methods to open and parse iWork documents in both modern (2013+)
-/// and legacy (2008-2009) formats. The parser handles both bundle-based and ZIP-based
-/// document packages.
-///
-/// ## Topics
-///
-/// ### Opening Documents
-///
-/// - ``open(at:)``
-///
-/// ## Example
-///
-/// ```swift
-/// let document = try IWorkParser.open(at: "/path/to/document.pages")
-/// print("Document type: \(document.type)")
-/// ```
-public enum IWorkParser {
+enum IWorkParser {
 
-  // MARK: - Public API
+  // MARK: - Internal API
 
-  /// Opens and parses an iWork document.
-  ///
-  /// This method supports both legacy (2008-2009) and modern (2013+) iWork formats.
-  /// The document can be either a directory bundle or a ZIP archive.
-  ///
-  /// - Parameter path: The file path to the iWork document package.
-  /// - Returns: A parsed ``IWorkDocument`` containing the document data.
-  /// - Throws: ``IWorkError`` if the document cannot be opened or parsed.
-  public static func open(at path: String) throws -> IWorkDocument {
-    let fileURL = URL(fileURLWithPath: path)
-    guard FileManager.default.fileExists(atPath: path) else {
-      throw IWorkError.fileNotFound(path: path)
+  static func open(at url: URL) throws -> IWorkDocument {
+    var isDirectory: ObjCBool = false
+    guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) else {
+      throw IWorkError.fileNotFound(url: url)
     }
 
-    let documentType = try determineDocumentType(from: fileURL)
-
-    var isDirectory: ObjCBool = false
-    FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory)
+    let documentType = try determineDocumentType(from: url)
 
     if isDirectory.boolValue {
-      return try openBundleFormat(at: fileURL, documentType: documentType, packagePath: path)
+      return try openBundleFormat(at: url, documentType: documentType)
     } else {
-      return try openZipFormat(at: fileURL, documentType: documentType, packagePath: path)
+      return try openZipFormat(at: url, documentType: documentType)
     }
   }
 
@@ -74,8 +45,7 @@ public enum IWorkParser {
 
   private static func openBundleFormat(
     at packageURL: URL,
-    documentType: IWorkDocument.DocumentType,
-    packagePath: String
+    documentType: IWorkDocument.DocumentType
   ) throws -> IWorkDocument {
     let legacyPaths = [
       "index.xml.gz",
@@ -93,11 +63,9 @@ public enum IWorkParser {
     }
 
     if legacyIndexExists {
-      return try openLegacyBundle(
-        at: packageURL, documentType: documentType, packagePath: packagePath)
+      return try openLegacyBundle(at: packageURL, documentType: documentType)
     } else if FileManager.default.fileExists(atPath: modernIndexPath.path) {
-      return try openModernBundle(
-        at: packageURL, documentType: documentType, packagePath: packagePath)
+      return try openModernBundle(at: packageURL, documentType: documentType)
     } else {
       throw IWorkError.missingIndexArchive
     }
@@ -105,8 +73,7 @@ public enum IWorkParser {
 
   private static func openModernBundle(
     at packageURL: URL,
-    documentType: IWorkDocument.DocumentType,
-    packagePath: String
+    documentType: IWorkDocument.DocumentType
   ) throws -> IWorkDocument {
     let metadataStorage = BundleStorage(rootURL: packageURL.appendingPathComponent("Metadata"))
     let metadata = try parseMetadata(from: metadataStorage)
@@ -126,32 +93,30 @@ public enum IWorkParser {
     }
     let indexStorage = ArchiveStorage(archive: archive)
     let records = try loadRecords(from: indexStorage, documentType: documentType, prefix: "")
-    let mainStorage = BundleStorage(rootURL: packageURL)
     return IWorkDocument(
       type: documentType,
       format: .modern,
       records: records,
       metadata: metadata,
-      storage: mainStorage,
-      packagePath: packagePath
+      storage: DocumentStorage(bundle: BundleStorage(rootURL: packageURL)),
+      packageURL: packageURL
     )
   }
 
   private static func openLegacyBundle(
     at packageURL: URL,
-    documentType: IWorkDocument.DocumentType,
-    packagePath: String
+    documentType: IWorkDocument.DocumentType
   ) throws -> IWorkDocument {
-    let storage = BundleStorage(rootURL: packageURL)
-    let metadata = try parseLegacyMetadata(from: storage)
+    let bundleStorage = BundleStorage(rootURL: packageURL)
+    let metadata = try parseLegacyMetadata(from: bundleStorage)
     let records: [UInt64: SwiftProtobuf.Message] = [:]
     return IWorkDocument(
       type: documentType,
       format: .legacy,
       records: records,
       metadata: metadata,
-      storage: storage,
-      packagePath: packagePath
+      storage: DocumentStorage(bundle: bundleStorage),
+      packageURL: packageURL
     )
   }
 
@@ -159,8 +124,7 @@ public enum IWorkParser {
 
   private static func openZipFormat(
     at fileURL: URL,
-    documentType: IWorkDocument.DocumentType,
-    packagePath: String
+    documentType: IWorkDocument.DocumentType
   ) throws -> IWorkDocument {
     let archive: Archive
     do {
@@ -172,7 +136,7 @@ public enum IWorkParser {
 
     if archive["Index/Document.iwa"] != nil {
       return try openModernArchive(
-        storage: storage, documentType: documentType, packagePath: packagePath)
+        storage: storage, documentType: documentType, packageURL: fileURL)
     }
 
     let legacyPaths = ["index.xml", "index.apxl"]
@@ -186,7 +150,7 @@ public enum IWorkParser {
 
     if hasLegacyIndex {
       return try openLegacyArchive(
-        storage: storage, documentType: documentType, packagePath: packagePath)
+        storage: storage, documentType: documentType, packageURL: fileURL)
     } else {
       throw IWorkError.missingIndexArchive
     }
@@ -219,9 +183,9 @@ public enum IWorkParser {
   }
 
   private static func openModernArchive(
-    storage: ContentStorage,
+    storage: ArchiveStorage,
     documentType: IWorkDocument.DocumentType,
-    packagePath: String
+    packageURL: URL
   ) throws -> IWorkDocument {
     let metadata = try parseMetadata(from: storage, prefix: "Metadata/")
     let records = try loadRecords(from: storage, documentType: documentType, prefix: "Index/")
@@ -235,15 +199,15 @@ public enum IWorkParser {
       format: .modern,
       records: records,
       metadata: metadata,
-      storage: storage,
-      packagePath: packagePath
+      storage: DocumentStorage(archive: storage),
+      packageURL: packageURL
     )
   }
 
   private static func openLegacyArchive(
-    storage: ContentStorage,
+    storage: ArchiveStorage,
     documentType: IWorkDocument.DocumentType,
-    packagePath: String
+    packageURL: URL
   ) throws -> IWorkDocument {
     let metadata = try parseLegacyMetadata(from: storage)
     let records: [UInt64: SwiftProtobuf.Message] = [:]
@@ -253,15 +217,15 @@ public enum IWorkParser {
       format: .legacy,
       records: records,
       metadata: metadata,
-      storage: storage,
-      packagePath: packagePath
+      storage: DocumentStorage(archive: storage),
+      packageURL: packageURL
     )
   }
 
   // MARK: - Metadata Parsing
 
-  private static func parseMetadata(
-    from storage: ContentStorage,
+  private static func parseMetadata<S: ContentStorage>(
+    from storage: S,
     prefix: String = ""
   ) throws -> IWorkMetadata {
     let properties: IWorkMetadata.DocumentProperties? = {
@@ -304,7 +268,7 @@ public enum IWorkParser {
     )
   }
 
-  private static func parseLegacyMetadata(from storage: ContentStorage) throws -> IWorkMetadata {
+  private static func parseLegacyMetadata<S: ContentStorage>(from storage: S) throws -> IWorkMetadata {
     let buildVersionHistory: [String] = {
       guard let plistData = try? storage.readData(from: "buildVersionHistory.plist"),
         let history = try? PropertyListSerialization.propertyList(
@@ -326,8 +290,8 @@ public enum IWorkParser {
 
   // MARK: - Record Loading
 
-  private static func loadRecords(
-    from storage: ContentStorage,
+  private static func loadRecords<S: ContentStorage>(
+    from storage: S,
     documentType: IWorkDocument.DocumentType,
     prefix: String
   ) throws -> [UInt64: SwiftProtobuf.Message] {

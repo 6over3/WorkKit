@@ -2526,88 +2526,95 @@ struct TSCHSOS_ChartReferenceLineNonStylePropertyChangeSetArchive: @unchecked Se
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
-struct TSCHSOS_ChartReferenceLineStylePropertyChangeSetArchive: @unchecked Sendable {
+struct TSCHSOS_ChartReferenceLineStylePropertyChangeSetArchive: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   var defaultLabelParagraphStyleIndex: TSSSOS_SpecIntegerArchive {
-    get {return _storage._defaultLabelParagraphStyleIndex ?? TSSSOS_SpecIntegerArchive()}
-    set {_uniqueStorage()._defaultLabelParagraphStyleIndex = newValue}
+    get {return _defaultLabelParagraphStyleIndex ?? TSSSOS_SpecIntegerArchive()}
+    set {_defaultLabelParagraphStyleIndex = newValue}
   }
   /// Returns true if `defaultLabelParagraphStyleIndex` has been explicitly set.
-  var hasDefaultLabelParagraphStyleIndex: Bool {return _storage._defaultLabelParagraphStyleIndex != nil}
+  var hasDefaultLabelParagraphStyleIndex: Bool {return self._defaultLabelParagraphStyleIndex != nil}
   /// Clears the value of `defaultLabelParagraphStyleIndex`. Subsequent reads from it will return its default value.
-  mutating func clearDefaultLabelParagraphStyleIndex() {_uniqueStorage()._defaultLabelParagraphStyleIndex = nil}
+  mutating func clearDefaultLabelParagraphStyleIndex() {self._defaultLabelParagraphStyleIndex = nil}
 
   var defaultLabelParagraphStyleIndexUndefined: Bool {
-    get {return _storage._defaultLabelParagraphStyleIndexUndefined ?? false}
-    set {_uniqueStorage()._defaultLabelParagraphStyleIndexUndefined = newValue}
+    get {return _defaultLabelParagraphStyleIndexUndefined ?? false}
+    set {_defaultLabelParagraphStyleIndexUndefined = newValue}
   }
   /// Returns true if `defaultLabelParagraphStyleIndexUndefined` has been explicitly set.
-  var hasDefaultLabelParagraphStyleIndexUndefined: Bool {return _storage._defaultLabelParagraphStyleIndexUndefined != nil}
+  var hasDefaultLabelParagraphStyleIndexUndefined: Bool {return self._defaultLabelParagraphStyleIndexUndefined != nil}
   /// Clears the value of `defaultLabelParagraphStyleIndexUndefined`. Subsequent reads from it will return its default value.
-  mutating func clearDefaultLabelParagraphStyleIndexUndefined() {_uniqueStorage()._defaultLabelParagraphStyleIndexUndefined = nil}
+  mutating func clearDefaultLabelParagraphStyleIndexUndefined() {self._defaultLabelParagraphStyleIndexUndefined = nil}
 
   var defaultShadow: TSDSOS_SpecShadowArchive {
-    get {return _storage._defaultShadow ?? TSDSOS_SpecShadowArchive()}
-    set {_uniqueStorage()._defaultShadow = newValue}
+    get {return _defaultShadow ?? TSDSOS_SpecShadowArchive()}
+    set {_defaultShadow = newValue}
   }
   /// Returns true if `defaultShadow` has been explicitly set.
-  var hasDefaultShadow: Bool {return _storage._defaultShadow != nil}
+  var hasDefaultShadow: Bool {return self._defaultShadow != nil}
   /// Clears the value of `defaultShadow`. Subsequent reads from it will return its default value.
-  mutating func clearDefaultShadow() {_uniqueStorage()._defaultShadow = nil}
+  mutating func clearDefaultShadow() {self._defaultShadow = nil}
 
   var defaultShadowUndefined: Bool {
-    get {return _storage._defaultShadowUndefined ?? false}
-    set {_uniqueStorage()._defaultShadowUndefined = newValue}
+    get {return _defaultShadowUndefined ?? false}
+    set {_defaultShadowUndefined = newValue}
   }
   /// Returns true if `defaultShadowUndefined` has been explicitly set.
-  var hasDefaultShadowUndefined: Bool {return _storage._defaultShadowUndefined != nil}
+  var hasDefaultShadowUndefined: Bool {return self._defaultShadowUndefined != nil}
   /// Clears the value of `defaultShadowUndefined`. Subsequent reads from it will return its default value.
-  mutating func clearDefaultShadowUndefined() {_uniqueStorage()._defaultShadowUndefined = nil}
+  mutating func clearDefaultShadowUndefined() {self._defaultShadowUndefined = nil}
 
   var defaultStroke: TSDSOS_SpecStrokeArchive {
-    get {return _storage._defaultStroke ?? TSDSOS_SpecStrokeArchive()}
-    set {_uniqueStorage()._defaultStroke = newValue}
+    get {return _defaultStroke ?? TSDSOS_SpecStrokeArchive()}
+    set {_defaultStroke = newValue}
   }
   /// Returns true if `defaultStroke` has been explicitly set.
-  var hasDefaultStroke: Bool {return _storage._defaultStroke != nil}
+  var hasDefaultStroke: Bool {return self._defaultStroke != nil}
   /// Clears the value of `defaultStroke`. Subsequent reads from it will return its default value.
-  mutating func clearDefaultStroke() {_uniqueStorage()._defaultStroke = nil}
+  mutating func clearDefaultStroke() {self._defaultStroke = nil}
 
   var defaultStrokeUndefined: Bool {
-    get {return _storage._defaultStrokeUndefined ?? false}
-    set {_uniqueStorage()._defaultStrokeUndefined = newValue}
+    get {return _defaultStrokeUndefined ?? false}
+    set {_defaultStrokeUndefined = newValue}
   }
   /// Returns true if `defaultStrokeUndefined` has been explicitly set.
-  var hasDefaultStrokeUndefined: Bool {return _storage._defaultStrokeUndefined != nil}
+  var hasDefaultStrokeUndefined: Bool {return self._defaultStrokeUndefined != nil}
   /// Clears the value of `defaultStrokeUndefined`. Subsequent reads from it will return its default value.
-  mutating func clearDefaultStrokeUndefined() {_uniqueStorage()._defaultStrokeUndefined = nil}
+  mutating func clearDefaultStrokeUndefined() {self._defaultStrokeUndefined = nil}
 
   var defaultValueLabelParagraphStyleIndex: TSSSOS_SpecIntegerArchive {
-    get {return _storage._defaultValueLabelParagraphStyleIndex ?? TSSSOS_SpecIntegerArchive()}
-    set {_uniqueStorage()._defaultValueLabelParagraphStyleIndex = newValue}
+    get {return _defaultValueLabelParagraphStyleIndex ?? TSSSOS_SpecIntegerArchive()}
+    set {_defaultValueLabelParagraphStyleIndex = newValue}
   }
   /// Returns true if `defaultValueLabelParagraphStyleIndex` has been explicitly set.
-  var hasDefaultValueLabelParagraphStyleIndex: Bool {return _storage._defaultValueLabelParagraphStyleIndex != nil}
+  var hasDefaultValueLabelParagraphStyleIndex: Bool {return self._defaultValueLabelParagraphStyleIndex != nil}
   /// Clears the value of `defaultValueLabelParagraphStyleIndex`. Subsequent reads from it will return its default value.
-  mutating func clearDefaultValueLabelParagraphStyleIndex() {_uniqueStorage()._defaultValueLabelParagraphStyleIndex = nil}
+  mutating func clearDefaultValueLabelParagraphStyleIndex() {self._defaultValueLabelParagraphStyleIndex = nil}
 
   var defaultValueLabelParagraphStyleIndexUndefined: Bool {
-    get {return _storage._defaultValueLabelParagraphStyleIndexUndefined ?? false}
-    set {_uniqueStorage()._defaultValueLabelParagraphStyleIndexUndefined = newValue}
+    get {return _defaultValueLabelParagraphStyleIndexUndefined ?? false}
+    set {_defaultValueLabelParagraphStyleIndexUndefined = newValue}
   }
   /// Returns true if `defaultValueLabelParagraphStyleIndexUndefined` has been explicitly set.
-  var hasDefaultValueLabelParagraphStyleIndexUndefined: Bool {return _storage._defaultValueLabelParagraphStyleIndexUndefined != nil}
+  var hasDefaultValueLabelParagraphStyleIndexUndefined: Bool {return self._defaultValueLabelParagraphStyleIndexUndefined != nil}
   /// Clears the value of `defaultValueLabelParagraphStyleIndexUndefined`. Subsequent reads from it will return its default value.
-  mutating func clearDefaultValueLabelParagraphStyleIndexUndefined() {_uniqueStorage()._defaultValueLabelParagraphStyleIndexUndefined = nil}
+  mutating func clearDefaultValueLabelParagraphStyleIndexUndefined() {self._defaultValueLabelParagraphStyleIndexUndefined = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
 
-  fileprivate var _storage = _StorageClass.defaultInstance
+  fileprivate var _defaultLabelParagraphStyleIndex: TSSSOS_SpecIntegerArchive? = nil
+  fileprivate var _defaultLabelParagraphStyleIndexUndefined: Bool? = nil
+  fileprivate var _defaultShadow: TSDSOS_SpecShadowArchive? = nil
+  fileprivate var _defaultShadowUndefined: Bool? = nil
+  fileprivate var _defaultStroke: TSDSOS_SpecStrokeArchive? = nil
+  fileprivate var _defaultStrokeUndefined: Bool? = nil
+  fileprivate var _defaultValueLabelParagraphStyleIndex: TSSSOS_SpecIntegerArchive? = nil
+  fileprivate var _defaultValueLabelParagraphStyleIndexUndefined: Bool? = nil
 }
 
 struct TSCHSOS_ChartSeriesNonStylePropertyChangeSetArchive: @unchecked Sendable {
@@ -9682,126 +9689,74 @@ extension TSCHSOS_ChartReferenceLineStylePropertyChangeSetArchive: SwiftProtobuf
   static let protoMessageName: String = _protobuf_package + ".ChartReferenceLineStylePropertyChangeSetArchive"
   static let _protobuf_nameMap = SwiftProtobuf._NameMap(bytecode: "\0\u{3}default_label_paragraph_style_index\0\u{3}default_label_paragraph_style_index_undefined\0\u{3}default_shadow\0\u{3}default_shadow_undefined\0\u{3}default_stroke\0\u{3}default_stroke_undefined\0\u{3}default_value_label_paragraph_style_index\0\u{3}default_value_label_paragraph_style_index_undefined\0")
 
-  fileprivate class _StorageClass {
-    var _defaultLabelParagraphStyleIndex: TSSSOS_SpecIntegerArchive? = nil
-    var _defaultLabelParagraphStyleIndexUndefined: Bool? = nil
-    var _defaultShadow: TSDSOS_SpecShadowArchive? = nil
-    var _defaultShadowUndefined: Bool? = nil
-    var _defaultStroke: TSDSOS_SpecStrokeArchive? = nil
-    var _defaultStrokeUndefined: Bool? = nil
-    var _defaultValueLabelParagraphStyleIndex: TSSSOS_SpecIntegerArchive? = nil
-    var _defaultValueLabelParagraphStyleIndexUndefined: Bool? = nil
-
-      // This property is used as the initial default value for new instances of the type.
-      // The type itself is protecting the reference to its storage via CoW semantics.
-      // This will force a copy to be made of this reference when the first mutation occurs;
-      // hence, it is safe to mark this as `nonisolated(unsafe)`.
-      static nonisolated(unsafe) let defaultInstance = _StorageClass()
-
-    private init() {}
-
-    init(copying source: _StorageClass) {
-      _defaultLabelParagraphStyleIndex = source._defaultLabelParagraphStyleIndex
-      _defaultLabelParagraphStyleIndexUndefined = source._defaultLabelParagraphStyleIndexUndefined
-      _defaultShadow = source._defaultShadow
-      _defaultShadowUndefined = source._defaultShadowUndefined
-      _defaultStroke = source._defaultStroke
-      _defaultStrokeUndefined = source._defaultStrokeUndefined
-      _defaultValueLabelParagraphStyleIndex = source._defaultValueLabelParagraphStyleIndex
-      _defaultValueLabelParagraphStyleIndexUndefined = source._defaultValueLabelParagraphStyleIndexUndefined
-    }
-  }
-
-  fileprivate mutating func _uniqueStorage() -> _StorageClass {
-    if !isKnownUniquelyReferenced(&_storage) {
-      _storage = _StorageClass(copying: _storage)
-    }
-    return _storage
-  }
-
   public var isInitialized: Bool {
-    return withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      if let v = _storage._defaultLabelParagraphStyleIndex, !v.isInitialized {return false}
-      if let v = _storage._defaultShadow, !v.isInitialized {return false}
-      if let v = _storage._defaultStroke, !v.isInitialized {return false}
-      if let v = _storage._defaultValueLabelParagraphStyleIndex, !v.isInitialized {return false}
-      return true
-    }
+    if let v = self._defaultLabelParagraphStyleIndex, !v.isInitialized {return false}
+    if let v = self._defaultShadow, !v.isInitialized {return false}
+    if let v = self._defaultStroke, !v.isInitialized {return false}
+    if let v = self._defaultValueLabelParagraphStyleIndex, !v.isInitialized {return false}
+    return true
   }
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    _ = _uniqueStorage()
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      while let fieldNumber = try decoder.nextFieldNumber() {
-        // The use of inline closures is to circumvent an issue where the compiler
-        // allocates stack space for every case branch when no optimizations are
-        // enabled. https://github.com/apple/swift-protobuf/issues/1034
-        switch fieldNumber {
-        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._defaultLabelParagraphStyleIndex) }()
-        case 2: try { try decoder.decodeSingularBoolField(value: &_storage._defaultLabelParagraphStyleIndexUndefined) }()
-        case 3: try { try decoder.decodeSingularMessageField(value: &_storage._defaultShadow) }()
-        case 4: try { try decoder.decodeSingularBoolField(value: &_storage._defaultShadowUndefined) }()
-        case 5: try { try decoder.decodeSingularMessageField(value: &_storage._defaultStroke) }()
-        case 6: try { try decoder.decodeSingularBoolField(value: &_storage._defaultStrokeUndefined) }()
-        case 7: try { try decoder.decodeSingularMessageField(value: &_storage._defaultValueLabelParagraphStyleIndex) }()
-        case 8: try { try decoder.decodeSingularBoolField(value: &_storage._defaultValueLabelParagraphStyleIndexUndefined) }()
-        default: break
-        }
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._defaultLabelParagraphStyleIndex) }()
+      case 2: try { try decoder.decodeSingularBoolField(value: &self._defaultLabelParagraphStyleIndexUndefined) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._defaultShadow) }()
+      case 4: try { try decoder.decodeSingularBoolField(value: &self._defaultShadowUndefined) }()
+      case 5: try { try decoder.decodeSingularMessageField(value: &self._defaultStroke) }()
+      case 6: try { try decoder.decodeSingularBoolField(value: &self._defaultStrokeUndefined) }()
+      case 7: try { try decoder.decodeSingularMessageField(value: &self._defaultValueLabelParagraphStyleIndex) }()
+      case 8: try { try decoder.decodeSingularBoolField(value: &self._defaultValueLabelParagraphStyleIndexUndefined) }()
+      default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every if/case branch local when no optimizations
-      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-      // https://github.com/apple/swift-protobuf/issues/1182
-      try { if let v = _storage._defaultLabelParagraphStyleIndex {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-      } }()
-      try { if let v = _storage._defaultLabelParagraphStyleIndexUndefined {
-        try visitor.visitSingularBoolField(value: v, fieldNumber: 2)
-      } }()
-      try { if let v = _storage._defaultShadow {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-      } }()
-      try { if let v = _storage._defaultShadowUndefined {
-        try visitor.visitSingularBoolField(value: v, fieldNumber: 4)
-      } }()
-      try { if let v = _storage._defaultStroke {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-      } }()
-      try { if let v = _storage._defaultStrokeUndefined {
-        try visitor.visitSingularBoolField(value: v, fieldNumber: 6)
-      } }()
-      try { if let v = _storage._defaultValueLabelParagraphStyleIndex {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-      } }()
-      try { if let v = _storage._defaultValueLabelParagraphStyleIndexUndefined {
-        try visitor.visitSingularBoolField(value: v, fieldNumber: 8)
-      } }()
-    }
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._defaultLabelParagraphStyleIndex {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._defaultLabelParagraphStyleIndexUndefined {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 2)
+    } }()
+    try { if let v = self._defaultShadow {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
+    try { if let v = self._defaultShadowUndefined {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 4)
+    } }()
+    try { if let v = self._defaultStroke {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    } }()
+    try { if let v = self._defaultStrokeUndefined {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 6)
+    } }()
+    try { if let v = self._defaultValueLabelParagraphStyleIndex {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    } }()
+    try { if let v = self._defaultValueLabelParagraphStyleIndexUndefined {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 8)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: TSCHSOS_ChartReferenceLineStylePropertyChangeSetArchive, rhs: TSCHSOS_ChartReferenceLineStylePropertyChangeSetArchive) -> Bool {
-    if lhs._storage !== rhs._storage {
-      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
-        let _storage = _args.0
-        let rhs_storage = _args.1
-        if _storage._defaultLabelParagraphStyleIndex != rhs_storage._defaultLabelParagraphStyleIndex {return false}
-        if _storage._defaultLabelParagraphStyleIndexUndefined != rhs_storage._defaultLabelParagraphStyleIndexUndefined {return false}
-        if _storage._defaultShadow != rhs_storage._defaultShadow {return false}
-        if _storage._defaultShadowUndefined != rhs_storage._defaultShadowUndefined {return false}
-        if _storage._defaultStroke != rhs_storage._defaultStroke {return false}
-        if _storage._defaultStrokeUndefined != rhs_storage._defaultStrokeUndefined {return false}
-        if _storage._defaultValueLabelParagraphStyleIndex != rhs_storage._defaultValueLabelParagraphStyleIndex {return false}
-        if _storage._defaultValueLabelParagraphStyleIndexUndefined != rhs_storage._defaultValueLabelParagraphStyleIndexUndefined {return false}
-        return true
-      }
-      if !storagesAreEqual {return false}
-    }
+    if lhs._defaultLabelParagraphStyleIndex != rhs._defaultLabelParagraphStyleIndex {return false}
+    if lhs._defaultLabelParagraphStyleIndexUndefined != rhs._defaultLabelParagraphStyleIndexUndefined {return false}
+    if lhs._defaultShadow != rhs._defaultShadow {return false}
+    if lhs._defaultShadowUndefined != rhs._defaultShadowUndefined {return false}
+    if lhs._defaultStroke != rhs._defaultStroke {return false}
+    if lhs._defaultStrokeUndefined != rhs._defaultStrokeUndefined {return false}
+    if lhs._defaultValueLabelParagraphStyleIndex != rhs._defaultValueLabelParagraphStyleIndex {return false}
+    if lhs._defaultValueLabelParagraphStyleIndexUndefined != rhs._defaultValueLabelParagraphStyleIndexUndefined {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
