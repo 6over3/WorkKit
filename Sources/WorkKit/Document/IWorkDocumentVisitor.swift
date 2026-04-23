@@ -134,6 +134,16 @@ public struct MediaInfo: Sendable, Codable, Equatable {
   /// Media style properties (border, shadow, opacity).
   public let style: MediaStyle?
 
+  /// Identifier of the `TSP.DataInfo` that supplied the media bytes at `filepath`.
+  public let dataID: UInt64?
+
+  /// Content-addressable hash of the media bytes (as stored in `TSP.DataInfo.digest`).
+  public let digest: Data?
+
+  /// Globally-unique identifier of the source asset in the user's Photos/Media library,
+  /// populated for media inserted via Creator Studio's media picker.
+  public let mediaLibraryAssetID: UUID?
+
   /// Creates a new media info instance.
   ///
   /// - Parameters:
@@ -149,6 +159,9 @@ public struct MediaInfo: Sendable, Codable, Equatable {
   ///   - title: Optional title caption.
   ///   - caption: Optional caption text.
   ///   - style: Optional media style properties.
+  ///   - dataID: Identifier of the backing `TSP.DataInfo` entry.
+  ///   - digest: Content digest of the media bytes.
+  ///   - mediaLibraryAssetID: Source asset UUID in the user's media library, if any.
   public init(
     type: MediaType,
     width: Int?,
@@ -161,7 +174,10 @@ public struct MediaInfo: Sendable, Codable, Equatable {
     posterImage: ImageInfo?,
     title: CaptionData?,
     caption: CaptionData?,
-    style: MediaStyle? = nil
+    style: MediaStyle? = nil,
+    dataID: UInt64? = nil,
+    digest: Data? = nil,
+    mediaLibraryAssetID: UUID? = nil
   ) {
     self.type = type
     self.width = width
@@ -175,6 +191,9 @@ public struct MediaInfo: Sendable, Codable, Equatable {
     self.title = title
     self.caption = caption
     self.style = style
+    self.dataID = dataID
+    self.digest = digest
+    self.mediaLibraryAssetID = mediaLibraryAssetID
   }
 }
 
@@ -888,6 +907,20 @@ public struct ImageInfo: Sendable, Codable, Equatable {
   /// Media style properties applied to the image.
   public let style: MediaStyle?
 
+  /// Identifier of the `TSP.DataInfo` that supplied the bytes at `filepath`.
+  /// Unique within the document package. For Creator Studio template placeholders this
+  /// is the `-small-N` derivative's identifier rather than the (unmaterialized) primary.
+  public let dataID: UInt64?
+
+  /// Content-addressable hash of the image bytes (as stored in `TSP.DataInfo.digest`).
+  /// Stable across documents containing the same asset — use for dedup/comparison.
+  public let digest: Data?
+
+  /// Globally-unique identifier of the source asset in the user's Photos/Media library,
+  /// populated for images inserted via Creator Studio's media picker. `nil` for images
+  /// sourced from clipboard, drag-and-drop, or older (pre-Creator Studio) insertions.
+  public let mediaLibraryAssetID: UUID?
+
   /// Creates a new image info instance.
   ///
   /// - Parameters:
@@ -900,6 +933,9 @@ public struct ImageInfo: Sendable, Codable, Equatable {
   ///   - caption: Optional caption text.
   ///   - attributes: Optional additional metadata attributes.
   ///   - style: Optional media style properties.
+  ///   - dataID: Identifier of the backing `TSP.DataInfo` entry.
+  ///   - digest: Content digest of the image bytes.
+  ///   - mediaLibraryAssetID: Source asset UUID in the user's media library, if any.
   public init(
     width: Int,
     height: Int,
@@ -909,7 +945,10 @@ public struct ImageInfo: Sendable, Codable, Equatable {
     title: CaptionData? = nil,
     caption: CaptionData? = nil,
     attributes: [String: String]? = nil,
-    style: MediaStyle? = nil
+    style: MediaStyle? = nil,
+    dataID: UInt64? = nil,
+    digest: Data? = nil,
+    mediaLibraryAssetID: UUID? = nil
   ) {
     self.width = width
     self.height = height
@@ -920,6 +959,9 @@ public struct ImageInfo: Sendable, Codable, Equatable {
     self.caption = caption
     self.attributes = attributes
     self.style = style
+    self.dataID = dataID
+    self.digest = digest
+    self.mediaLibraryAssetID = mediaLibraryAssetID
   }
 }
 
@@ -1051,6 +1093,11 @@ public struct SpatialInfo: Sendable, Codable, Equatable {
   /// Whether this element floats above text.
   public let isFloatingAboveText: Bool
 
+  /// Underlying record identifier of the drawable (image/shape/table/…) this spatial info
+  /// describes, unique within the document package. `nil` for synthetic elements with no
+  /// backing record. Use to correlate two visitor callbacks that refer to the same object.
+  public let drawableID: UInt64?
+
   /// Creates a new spatial info instance.
   ///
   /// - Parameters:
@@ -1060,13 +1107,15 @@ public struct SpatialInfo: Sendable, Codable, Equatable {
   ///   - zIndex: Optional z-order index.
   ///   - isAnchoredToText: Whether anchored to text flow.
   ///   - isFloatingAboveText: Whether floating above text.
+  ///   - drawableID: Optional document-local record identifier.
   public init(
     coordinateSpace: CoordinateSpace,
     frame: CGRect,
     rotation: Double = 0,
     zIndex: Int? = nil,
     isAnchoredToText: Bool = false,
-    isFloatingAboveText: Bool = false
+    isFloatingAboveText: Bool = false,
+    drawableID: UInt64? = nil
   ) {
     self.coordinateSpace = coordinateSpace
     self.frame = frame
@@ -1074,6 +1123,7 @@ public struct SpatialInfo: Sendable, Codable, Equatable {
     self.zIndex = zIndex
     self.isAnchoredToText = isAnchoredToText
     self.isFloatingAboveText = isFloatingAboveText
+    self.drawableID = drawableID
   }
 
   /// The center point of the element.

@@ -2489,7 +2489,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
         rotation: rotation,
         zIndex: zIndex,
         isAnchoredToText: isAnchoredToText,
-        isFloatingAboveText: isFloatingAboveText
+        isFloatingAboveText: isFloatingAboveText,
+        drawableID: drawableID
       )
     }
 
@@ -2621,6 +2622,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     let height = movie.hasNaturalSize ? Int(movie.naturalSize.height) : nil
     let style = movie.resolveMediaStyle(using: self.document)
 
+    let assetIdentity = resolveAssetIdentity(dataID: dataID, metadata: metadata)
+
     let info = MediaInfo(
       type: mediaType,
       width: width,
@@ -2633,7 +2636,10 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       posterImage: posterImage,
       title: captionInfo.title,
       caption: captionInfo.caption,
-      style: style
+      style: style,
+      dataID: dataID,
+      digest: assetIdentity.digest,
+      mediaLibraryAssetID: assetIdentity.mediaLibraryAssetID
     )
 
     let spatialInfo = parseSpatialInfo(
@@ -2699,6 +2705,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     let width = movie.hasNaturalSize ? Int(movie.naturalSize.width) : 0
     let height = movie.hasNaturalSize ? Int(movie.naturalSize.height) : 0
 
+    let assetIdentity = resolveAssetIdentity(dataID: posterDataID, metadata: metadata)
+
     let info = ImageInfo(
       width: width,
       height: height,
@@ -2706,7 +2714,10 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       description: nil,
       filepath: filepath,
       title: nil,
-      caption: nil
+      caption: nil,
+      dataID: posterDataID,
+      digest: assetIdentity.digest,
+      mediaLibraryAssetID: assetIdentity.mediaLibraryAssetID
     )
 
     return info
@@ -2877,16 +2888,54 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
   private func resolveMaterializedImageFile(
     from image: TSD_ImageArchive,
     metadata: TSP_PackageMetadata
-  ) -> (filename: String, filepath: String)? {
+  ) -> (filename: String, filepath: String, dataID: UInt64)? {
     for dataID in candidateImageDataIDs(image) {
       if let resolved = resolveFile(from: metadata, dataID: dataID),
         let filename = resolved.filename,
         let filepath = resolved.filepath
       {
-        return (filename, filepath)
+        return (filename, filepath, dataID)
       }
     }
     return nil
+  }
+
+  /// Identity metadata for a single `TSP.DataInfo` entry — the on-disk content digest
+  /// and, when present, the globally-unique media library asset UUID from the
+  /// `TSD.ImageDataAttributes` extension (new in Creator Studio). Returns `(nil, nil)`
+  /// for assets that don't carry a digest (rare) or weren't sourced from the media
+  /// library.
+  private func resolveAssetIdentity(
+    dataID: UInt64,
+    metadata: TSP_PackageMetadata
+  ) -> (digest: Data?, mediaLibraryAssetID: UUID?) {
+    guard let dataInfo = metadata.datas.first(where: { $0.identifier == dataID }) else {
+      return (nil, nil)
+    }
+    let digest: Data? = dataInfo.digest.isEmpty ? nil : dataInfo.digest
+
+    var mediaLibraryAssetID: UUID?
+    if dataInfo.hasAttributes {
+      // `TSP.PackageMetadata` is decoded without extensions registered, so the
+      // `ImageDataAttributes` payload lives in unknownFields. Re-decode the serialized
+      // attributes with the extension map so we can read `media_library_asset_id`.
+      if let bytes = try? dataInfo.attributes.serializedData(),
+        let attrs = try? TSP_DataAttributes(
+          serializedBytes: bytes,
+          extensions: SwiftProtobuf.SimpleExtensionMap([
+            TSD_ImageDataAttributes.Extensions.image_data_attributes
+          ])
+        ),
+        attrs.hasTSD_ImageDataAttributes_imageDataAttributes
+      {
+        let imageAttrs = attrs.TSD_ImageDataAttributes_imageDataAttributes
+        if imageAttrs.hasMediaLibraryAssetID {
+          mediaLibraryAssetID = IWorkUUID(tspUUID: imageAttrs.mediaLibraryAssetID).uuid
+        }
+      }
+    }
+
+    return (digest, mediaLibraryAssetID)
   }
 
   /// Parses accessibility description from an image.
@@ -2915,7 +2964,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     info: ImageInfo, spatialInfo: SpatialInfo, filepath: String, hyperlink: Hyperlink?
   )? {
     guard let metadata: TSP_PackageMetadata = document.record(id: 2),
-      let (filename, filepath) = resolveMaterializedImageFile(from: image, metadata: metadata)
+      let resolved = resolveMaterializedImageFile(from: image, metadata: metadata)
     else {
       return nil
     }
@@ -2934,26 +2983,31 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
 
     let style = image.resolveMediaStyle(using: self.document, mask: mask)
 
+    let assetIdentity = resolveAssetIdentity(dataID: resolved.dataID, metadata: metadata)
+
     let info = ImageInfo(
       width: Int(image.naturalSize.width),
       height: Int(image.naturalSize.height),
-      filename: filename,
+      filename: resolved.filename,
       description: description,
-      filepath: filepath,
+      filepath: resolved.filepath,
       title: captionInfo.title,
       caption: captionInfo.caption,
       attributes: image.webVideoAttributes,
-      style: style
+      style: style,
+      dataID: resolved.dataID,
+      digest: assetIdentity.digest,
+      mediaLibraryAssetID: assetIdentity.mediaLibraryAssetID
     )
 
     let hyperlink: Hyperlink?
     if image.hasSuper && image.super.hasHyperlinkURL {
-      hyperlink = Hyperlink(text: filename, url: image.super.hyperlinkURL, range: 0..<0)
+      hyperlink = Hyperlink(text: resolved.filename, url: image.super.hyperlinkURL, range: 0..<0)
     } else {
       hyperlink = nil
     }
 
-    return (info: info, spatialInfo: spatialInfo, filepath: filepath, hyperlink: hyperlink)
+    return (info: info, spatialInfo: spatialInfo, filepath: resolved.filepath, hyperlink: hyperlink)
   }
 
   /// Parses table structure and cell data.
@@ -4719,7 +4773,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       rotation: rotation,
       zIndex: zIndex,
       isAnchoredToText: isAnchoredToText,
-      isFloatingAboveText: isFloatingAboveText
+      isFloatingAboveText: isFloatingAboveText,
+      drawableID: drawableID
     )
   }
 
@@ -4889,6 +4944,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       return nil
     }
 
+    let assetIdentity = resolveAssetIdentity(dataID: dataID, metadata: metadata)
+
     let info = ImageInfo(
       width: 0,
       height: 0,
@@ -4896,7 +4953,10 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       description: nil,
       filepath: filepath,
       title: nil,
-      caption: nil
+      caption: nil,
+      dataID: dataID,
+      digest: assetIdentity.digest,
+      mediaLibraryAssetID: assetIdentity.mediaLibraryAssetID
     )
 
     return info
