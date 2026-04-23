@@ -147,4 +147,12 @@ public enum IWorkError: Error, Sendable, Equatable {
   ///   - expected: The expected document type.
   ///   - found: The actual document type found.
   case documentTypeMismatch(expected: IWorkDocument.DocumentType, found: IWorkDocument.DocumentType)
+
+  /// The `fileFormatVersion` entry in `Properties.plist` is missing or unparseable.
+  ///
+  /// Modern iWork documents must declare a dotted version string (e.g. `"14.4.1"`).
+  /// This error indicates the entry was absent, empty, or not a valid semver.
+  ///
+  /// - Parameter raw: The raw string that failed to parse, or `nil` if the key was missing.
+  case invalidFileFormatVersion(raw: String?)
 }

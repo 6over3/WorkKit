@@ -125,7 +125,7 @@ public struct IWorkDocument: @unchecked Sendable {
   /// - Returns: Image or PDF data if the preview exists, otherwise `nil`.
   public func preview(_ size: PreviewSize) -> Data? {
     switch format {
-    case .modern:
+    case .modern, .creatorStudio:
       let path: String
       switch size {
       case .thumbnail:
@@ -178,7 +178,7 @@ public struct IWorkDocument: @unchecked Sendable {
     var previews: [String: Data] = [:]
 
     switch format {
-    case .modern:
+    case .modern, .creatorStudio:
       if let thumbnail = preview(.thumbnail) {
         previews["thumbnail"] = thumbnail
       }
@@ -225,7 +225,7 @@ public struct IWorkDocument: @unchecked Sendable {
     ocrProvider: O
   ) async throws {
     switch format {
-    case .modern:
+    case .modern, .creatorStudio:
       let context = TraversalContext(
         document: self,
         visitor: visitor,
@@ -247,7 +247,7 @@ public struct IWorkDocument: @unchecked Sendable {
     visitor: V
   ) async throws {
     switch format {
-    case .modern:
+    case .modern, .creatorStudio:
       let context = TraversalContext<V, NullOCRProvider>(
         document: self,
         visitor: visitor,
@@ -339,8 +339,76 @@ extension IWorkDocument {
     /// Legacy XML-based format (2008-2009).
     case legacy
 
-    /// Modern protobuf-based format (2013+).
-    case modern
+    /// Classic modern protobuf-based format (Pages/Numbers/Keynote 5–14, file format major < 26).
+    case modern(Semver)
+
+    /// Creator Studio format (Pages/Numbers/Keynote 15+, file format major ≥ 26).
+    ///
+    /// Apple bumped `fileFormatVersion` from the 14.x line directly to 26.x when shipping
+    /// the Creator Studio apps; documents produced by those apps are tagged with this case.
+    case creatorStudio(Semver)
+
+    /// The parsed file-format version for modern documents, or `nil` for legacy.
+    public var semver: Semver? {
+      switch self {
+      case .legacy: return nil
+      case .modern(let v), .creatorStudio(let v): return v
+      }
+    }
+
+    /// Whether the document uses the legacy XML format.
+    public var isLegacy: Bool {
+      if case .legacy = self { return true }
+      return false
+    }
+
+    /// Whether the document uses either modern protobuf format (classic or Creator Studio).
+    public var isModern: Bool {
+      switch self {
+      case .legacy: return false
+      case .modern, .creatorStudio: return true
+      }
+    }
+
+    /// Whether the document was produced by a Creator Studio app.
+    public var isCreatorStudio: Bool {
+      if case .creatorStudio = self { return true }
+      return false
+    }
+  }
+
+  /// Semantic version parsed from a dotted version string.
+  public struct Semver: Sendable, Codable, Equatable, Comparable, CustomStringConvertible {
+    public let major: Int
+    public let minor: Int
+    public let patch: Int
+
+    public init(major: Int, minor: Int = 0, patch: Int = 0) {
+      self.major = major
+      self.minor = minor
+      self.patch = patch
+    }
+
+    /// Parses a dotted version string like `"14.4.1"` or `"26.1.0"`. Trailing components
+    /// default to `0`; non-numeric components cause a `nil` result.
+    public init?(_ raw: String) {
+      let parts = raw.split(separator: ".")
+      guard !parts.isEmpty, let major = Int(parts[0]) else { return nil }
+      let minor = parts.count > 1 ? Int(parts[1]) : 0
+      let patch = parts.count > 2 ? Int(parts[2]) : 0
+      guard let minor, let patch else { return nil }
+      self.major = major
+      self.minor = minor
+      self.patch = patch
+    }
+
+    public static func < (lhs: Semver, rhs: Semver) -> Bool {
+      if lhs.major != rhs.major { return lhs.major < rhs.major }
+      if lhs.minor != rhs.minor { return lhs.minor < rhs.minor }
+      return lhs.patch < rhs.patch
+    }
+
+    public var description: String { "\(major).\(minor).\(patch)" }
   }
 }
 

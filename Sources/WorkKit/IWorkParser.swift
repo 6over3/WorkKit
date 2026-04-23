@@ -1,3 +1,4 @@
+import Compression
 import Foundation
 import SwiftProtobuf
 import ZIPFoundation
@@ -95,7 +96,7 @@ enum IWorkParser {
     let records = try loadRecords(from: indexStorage, documentType: documentType, prefix: "")
     return IWorkDocument(
       type: documentType,
-      format: .modern,
+      format: try modernFormatVersion(from: metadata),
       records: records,
       metadata: metadata,
       storage: DocumentStorage(bundle: BundleStorage(rootURL: packageURL)),
@@ -196,7 +197,7 @@ enum IWorkParser {
     }
     return IWorkDocument(
       type: documentType,
-      format: .modern,
+      format: try modernFormatVersion(from: metadata),
       records: records,
       metadata: metadata,
       storage: DocumentStorage(archive: storage),
@@ -220,6 +221,27 @@ enum IWorkParser {
       storage: DocumentStorage(archive: storage),
       packageURL: packageURL
     )
+  }
+
+  // MARK: - Format Version Classification
+
+  /// File-format major version at which Apple introduced the Creator Studio apps.
+  /// Documents produced by Pages/Numbers/Keynote 15+ are tagged 26.x; older apps stay at 14.x.
+  private static let creatorStudioFormatMajor = 26
+
+  private static func modernFormatVersion(
+    from metadata: IWorkMetadata
+  ) throws -> IWorkDocument.FormatVersion {
+    let raw = metadata.properties?.fileFormatVersion
+    guard let raw, !raw.isEmpty else {
+      throw IWorkError.invalidFileFormatVersion(raw: raw)
+    }
+    guard let semver = IWorkDocument.Semver(raw) else {
+      throw IWorkError.invalidFileFormatVersion(raw: raw)
+    }
+    return semver.major >= creatorStudioFormatMajor
+      ? .creatorStudio(semver)
+      : .modern(semver)
   }
 
   // MARK: - Metadata Parsing
@@ -323,7 +345,7 @@ enum IWorkParser {
     documentType: IWorkDocument.DocumentType,
     mergingOnly: Bool = false
   ) throws {
-    let decompressed = try decompressSnappyChunks(data)
+    let decompressed = try decompressIWA(data)
 
     var offset = 0
     while offset < decompressed.count {
@@ -409,7 +431,53 @@ enum IWorkParser {
     }
   }
 
-  // MARK: - Snappy Decompression
+  // MARK: - IWA Decompression
+
+  /// LZFSE block magics. Apple's LZFSE framing uses these little-endian 4-byte markers;
+  /// `bvxn` is the LZVN compressed-block header and `bvx$` closes the stream.
+  /// Creator Studio–era writers emit some IWAs (e.g. `OperationStorage.iwa`) in this framing
+  /// instead of the classic `0x00 | len24 | snappy-chunk` repeating structure.
+  private static let lzfseMagicBvxn: [UInt8] = [0x62, 0x76, 0x78, 0x6E]
+
+  private static func decompressIWA(_ data: Data) throws -> Data {
+    guard data.count >= 4 else {
+      throw IWorkError.invalidArchiveStructure(reason: "IWA file too small to contain a header.")
+    }
+
+    if data.starts(with: Self.lzfseMagicBvxn) {
+      return try decompressLZFSE(data)
+    }
+
+    return try decompressSnappyChunks(data)
+  }
+
+  /// Decompresses a full LZFSE-framed IWA stream via the OS `Compression` framework.
+  /// The framework consumes the entire stream (all `bvxn`/`bvx-`/… blocks and the `bvx$`
+  /// terminator); we only need to size the scratch buffer from the first block's
+  /// `n_raw_bytes` field, which matches the total uncompressed size in practice.
+  private static func decompressLZFSE(_ data: Data) throws -> Data {
+    let rawSize = data.withUnsafeBytes { ptr -> Int in
+      Int(ptr.loadUnaligned(fromByteOffset: 4, as: UInt32.self))
+    }
+    guard rawSize > 0 else {
+      throw IWorkError.invalidArchiveStructure(reason: "LZFSE header reports zero raw bytes.")
+    }
+
+    var dst = [UInt8](repeating: 0, count: rawSize)
+    let written = data.withUnsafeBytes { srcPtr -> Int in
+      guard let srcBase = srcPtr.bindMemory(to: UInt8.self).baseAddress else { return 0 }
+      return compression_decode_buffer(
+        &dst, rawSize,
+        srcBase, data.count,
+        nil, COMPRESSION_LZFSE
+      )
+    }
+
+    guard written > 0 else {
+      throw IWorkError.snappyDecompressionFailed
+    }
+    return Data(bytes: dst, count: written)
+  }
 
   private static func decompressSnappyChunks(_ data: Data) throws -> Data {
     var result = Data()

@@ -6,7 +6,7 @@ import Testing
 @testable import WorkKit
 
 @Test func helloWorld() async throws {
-  
+
 }
 
 @Test func testPDFMetadataExtraction() async throws {

@@ -47,6 +47,12 @@ extension IWorkError: LocalizedError {
 
     case .documentTypeMismatch(let expected, let found):
       return "Document type mismatch: expected \(expected), found \(found)"
+
+    case .invalidFileFormatVersion(let raw):
+      if let raw, !raw.isEmpty {
+        return "Properties.plist has an unparseable fileFormatVersion: \(raw)"
+      }
+      return "Properties.plist is missing a fileFormatVersion entry."
     }
   }
 }

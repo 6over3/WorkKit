@@ -2843,6 +2843,52 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     return nil
   }
 
+  /// Candidate data identifiers to try when resolving an image's on-disk bytes, in
+  /// preferred-quality order. Creator Studio template placeholders reference a primary
+  /// `data` asset that isn't materialized locally (it lives in the template via a
+  /// `document_resource_locator`), while the `-small-N` derivative IS shipped —
+  /// falling back through `adjustedImageData` → `enhancedImageData` → `originalData`
+  /// → `thumbnailAdjustedImageData` → `thumbnailData` → `databaseData` picks up the
+  /// best available local byte representation. Order preserves the primary first so
+  /// fully-materialized user-inserted images are unaffected.
+  private func candidateImageDataIDs(_ image: TSD_ImageArchive) -> [UInt64] {
+    var ids: [UInt64] = []
+    func appendData(_ has: Bool, _ ref: TSP_DataReference) {
+      if has && ref.hasIdentifier { ids.append(ref.identifier) }
+    }
+    func appendRef(_ has: Bool, _ ref: TSP_Reference) {
+      if has && ref.hasIdentifier { ids.append(ref.identifier) }
+    }
+    appendData(image.hasData, image.data)
+    appendData(image.hasAdjustedImageData, image.adjustedImageData)
+    appendData(image.hasEnhancedImageData, image.enhancedImageData)
+    appendData(image.hasOriginalData, image.originalData)
+    appendData(image.hasThumbnailAdjustedImageData, image.thumbnailAdjustedImageData)
+    appendData(image.hasThumbnailData, image.thumbnailData)
+    appendRef(image.hasDatabaseData, image.databaseData)
+
+    var seen = Set<UInt64>()
+    return ids.filter { seen.insert($0).inserted }
+  }
+
+  /// Walks the image's candidate data references and returns the first one whose file
+  /// is actually present on disk in the document package. Returns `nil` only when the
+  /// image has no locally-materialized representation at all.
+  private func resolveMaterializedImageFile(
+    from image: TSD_ImageArchive,
+    metadata: TSP_PackageMetadata
+  ) -> (filename: String, filepath: String)? {
+    for dataID in candidateImageDataIDs(image) {
+      if let resolved = resolveFile(from: metadata, dataID: dataID),
+        let filename = resolved.filename,
+        let filepath = resolved.filepath
+      {
+        return (filename, filepath)
+      }
+    }
+    return nil
+  }
+
   /// Parses accessibility description from an image.
   ///
   /// - Parameter image: Image archive.
@@ -2868,11 +2914,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
   ) throws -> (
     info: ImageInfo, spatialInfo: SpatialInfo, filepath: String, hyperlink: Hyperlink?
   )? {
-    guard let dataID = parseDataID(from: image),
-      let metadata: TSP_PackageMetadata = document.record(id: 2),
-      let resolvedFile = resolveFile(from: metadata, dataID: dataID),
-      let filename = resolvedFile.0,
-      let filepath = resolvedFile.1
+    guard let metadata: TSP_PackageMetadata = document.record(id: 2),
+      let (filename, filepath) = resolveMaterializedImageFile(from: image, metadata: metadata)
     else {
       return nil
     }
