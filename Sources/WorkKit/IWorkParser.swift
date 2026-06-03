@@ -434,17 +434,17 @@ enum IWorkParser {
   // MARK: - IWA Decompression
 
   /// LZFSE block magics. Apple's LZFSE framing uses these little-endian 4-byte markers;
-  /// `bvxn` is the LZVN compressed-block header and `bvx$` closes the stream.
+  /// `bvxn` (LZVN) and `bvx2` (LZFSE) are compressed-block headers and `bvx$` closes the stream.
   /// Creator Studio–era writers emit some IWAs (e.g. `OperationStorage.iwa`) in this framing
   /// instead of the classic `0x00 | len24 | snappy-chunk` repeating structure.
-  private static let lzfseMagicBvxn: [UInt8] = [0x62, 0x76, 0x78, 0x6E]
+  private static let lzfseMagicBvx: [UInt8] = [0x62, 0x76, 0x78]
 
   private static func decompressIWA(_ data: Data) throws -> Data {
     guard data.count >= 4 else {
       throw IWorkError.invalidArchiveStructure(reason: "IWA file too small to contain a header.")
     }
 
-    if data.starts(with: Self.lzfseMagicBvxn) {
+    if data.starts(with: Self.lzfseMagicBvx) {
       return try decompressLZFSE(data)
     }
 
