@@ -589,10 +589,10 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
     hyperlink: Hyperlink?,
     isFloating: Bool = false
   ) {
-    if let attributes = info.attributes {
-      let externalURL = attributes["externalURL"] ?? ""
-      let title = attributes["title"]
-      let description = attributes["description"]
+    if let webVideo = info.webVideo {
+      let externalURL = webVideo.externalURL ?? ""
+      let title = webVideo.title
+      let description = webVideo.description
       
       let altText: String
       if let desc = description, !cleanText(desc).isEmpty {

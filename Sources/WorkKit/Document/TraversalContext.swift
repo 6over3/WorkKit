@@ -2993,7 +2993,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       filepath: resolved.filepath,
       title: captionInfo.title,
       caption: captionInfo.caption,
-      attributes: image.webVideoAttributes,
+      webVideo: image.webVideoInfo,
       style: style,
       dataID: resolved.dataID,
       digest: assetIdentity.digest,

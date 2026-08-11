@@ -878,6 +878,38 @@ public struct MediaStyle: Sendable, Codable, Equatable {
   }
 }
 
+/// Metadata for a web video represented by an image preview in an iWork document.
+public struct WebVideoInfo: Sendable, Codable, Equatable {
+  /// The provider-supplied title.
+  public let title: String?
+
+  /// The provider-supplied description.
+  public let description: String?
+
+  /// The URL that opens the embedded video.
+  public let externalURL: String?
+
+  /// The provider-supplied author name.
+  public let authorName: String?
+
+  /// The URL that opens the author.
+  public let authorURL: String?
+
+  public init(
+    title: String?,
+    description: String?,
+    externalURL: String?,
+    authorName: String?,
+    authorURL: String?
+  ) {
+    self.title = title
+    self.description = description
+    self.externalURL = externalURL
+    self.authorName = authorName
+    self.authorURL = authorURL
+  }
+}
+
 /// Information about an image being processed.
 public struct ImageInfo: Sendable, Codable, Equatable {
   /// The width of the image in pixels.
@@ -901,8 +933,8 @@ public struct ImageInfo: Sendable, Codable, Equatable {
   /// Caption text, if available.
   public let caption: CaptionData?
 
-  /// Additional metadata attributes for the image.
-  public let attributes: [String: String]?
+  /// Web-video metadata when the image is the preview for an embedded video.
+  public let webVideo: WebVideoInfo?
 
   /// Media style properties applied to the image.
   public let style: MediaStyle?
@@ -931,7 +963,7 @@ public struct ImageInfo: Sendable, Codable, Equatable {
   ///   - filepath: File path within the document archive.
   ///   - title: Optional title caption.
   ///   - caption: Optional caption text.
-  ///   - attributes: Optional additional metadata attributes.
+  ///   - webVideo: Web-video metadata when this image is an embed preview.
   ///   - style: Optional media style properties.
   ///   - dataID: Identifier of the backing `TSP.DataInfo` entry.
   ///   - digest: Content digest of the image bytes.
@@ -944,7 +976,7 @@ public struct ImageInfo: Sendable, Codable, Equatable {
     filepath: String,
     title: CaptionData? = nil,
     caption: CaptionData? = nil,
-    attributes: [String: String]? = nil,
+    webVideo: WebVideoInfo? = nil,
     style: MediaStyle? = nil,
     dataID: UInt64? = nil,
     digest: Data? = nil,
@@ -957,7 +989,7 @@ public struct ImageInfo: Sendable, Codable, Equatable {
     self.filepath = filepath
     self.title = title
     self.caption = caption
-    self.attributes = attributes
+    self.webVideo = webVideo
     self.style = style
     self.dataID = dataID
     self.digest = digest
