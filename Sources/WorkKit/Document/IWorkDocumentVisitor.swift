@@ -88,16 +88,16 @@ public enum MediaType: Sendable, Codable, Equatable {
 public struct MediaAttribution: Sendable, Codable, Equatable {
   public let title: String?
   public let description: String?
-  public let externalURL: URL?
+  public let externalURL: String?
   public let authorName: String?
-  public let authorURL: URL?
+  public let authorURL: String?
 
   public init(
     title: String?,
     description: String?,
-    externalURL: URL?,
+    externalURL: String?,
     authorName: String?,
-    authorURL: URL?
+    authorURL: String?
   ) {
     self.title = title
     self.description = description
@@ -128,7 +128,7 @@ public struct MediaInfo: Sendable, Codable, Equatable {
   public let filepath: String?
 
   /// URL of externally hosted media when the package does not contain the media bytes.
-  public let remoteURL: URL?
+  public let remoteURL: String?
 
   /// Provider metadata for externally hosted media.
   public let attribution: MediaAttribution?
@@ -198,7 +198,7 @@ public struct MediaInfo: Sendable, Codable, Equatable {
     duration: Double,
     filename: String?,
     filepath: String?,
-    remoteURL: URL? = nil,
+    remoteURL: String? = nil,
     attribution: MediaAttribution? = nil,
     volume: Float,
     loopOption: LoopOption,
@@ -914,13 +914,13 @@ public struct MediaStyle: Sendable, Codable, Equatable {
 /// Metadata for a web video represented by an image preview in an iWork document.
 public struct WebVideoInfo: Sendable, Codable, Equatable {
   /// The URL stored by iWork for the embedded video.
-  public let url: URL?
+  public let url: String?
 
   /// Provider metadata for the embedded video.
   public let attribution: MediaAttribution?
 
   public init(
-    url: URL?,
+    url: String?,
     attribution: MediaAttribution?
   ) {
     self.url = url

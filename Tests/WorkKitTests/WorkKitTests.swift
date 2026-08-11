@@ -19,10 +19,10 @@ import Testing
   archive.TSA_WebVideoInfo_webVideoInfo = webVideo
 
   let parsed = try #require(archive.webVideoInfo)
-  #expect(parsed.url == URL(string: "https://www.youtube.com/embed/source"))
+  #expect(parsed.url == "https://www.youtube.com/embed/source")
   #expect(
     parsed.attribution?.externalURL
-      == URL(string: "https://www.youtube.com/watch?v=source")
+      == "https://www.youtube.com/watch?v=source"
   )
   #expect(parsed.attribution?.title == "An embedded video")
   #expect(parsed.attribution?.authorName == "Creator")
@@ -36,6 +36,6 @@ import Testing
   archive.TSA_WebVideoInfo_webVideoInfo = webVideo
 
   let parsed = try #require(archive.webVideoInfo)
-  #expect(parsed.url == URL(string: "https://video.example/watch/1"))
+  #expect(parsed.url == "https://video.example/watch/1")
   #expect(parsed.attribution == nil)
 }

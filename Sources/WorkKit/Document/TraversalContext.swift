@@ -2591,7 +2591,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     let resolvedFile = dataID.flatMap { dataID in
       metadata.flatMap { resolveFile(from: $0, dataID: dataID) }
     }
-    let remoteURL = movie.hasMovieRemoteURL ? URL(string: movie.movieRemoteURL) : nil
+    let remoteURL = movie.hasMovieRemoteURL ? movie.movieRemoteURL : nil
     guard resolvedFile != nil || remoteURL != nil else {
       return nil
     }

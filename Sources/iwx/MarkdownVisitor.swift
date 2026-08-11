@@ -627,7 +627,7 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
       }
 
       if let externalURL {
-        paragraphBuffer += "[\(imageMarkdown)](\(externalURL.absoluteString))"
+        paragraphBuffer += "[\(imageMarkdown)](\(externalURL))"
       } else {
         paragraphBuffer += imageMarkdown
       }
