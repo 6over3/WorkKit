@@ -26,7 +26,7 @@ let package = Package(
     .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.31.1"),
     .package(url: "https://github.com/apple/swift-log", from: "1.6.4"),
     .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.20"),
-    .package(url: "https://github.com/apple/swift-collections.git", .upToNextMinor(from: "1.3.0")),
+    .package(url: "https://github.com/apple/swift-collections.git", from: "1.3.0"),
 
   ],
   targets: [
