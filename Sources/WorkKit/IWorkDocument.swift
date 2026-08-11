@@ -305,7 +305,7 @@ public struct IWorkDocument: @unchecked Sendable {
 
 extension IWorkDocument {
   /// The type of iWork document.
-  public enum DocumentType: String, Sendable, Codable, Equatable {
+  public enum DocumentType: String, Sendable, Codable, Hashable {
     /// A Pages word processing document.
     case pages
 
@@ -335,7 +335,7 @@ extension IWorkDocument {
 
 extension IWorkDocument {
   /// The format version of the iWork document.
-  public enum FormatVersion: Sendable, Codable, Equatable {
+  public enum FormatVersion: Sendable, Codable, Hashable {
     /// Legacy XML-based format (2008-2009).
     case legacy
 
@@ -378,7 +378,7 @@ extension IWorkDocument {
   }
 
   /// Semantic version parsed from a dotted version string.
-  public struct Semver: Sendable, Codable, Equatable, Comparable, CustomStringConvertible {
+  public struct Semver: Sendable, Codable, Hashable, Comparable, CustomStringConvertible {
     public let major: Int
     public let minor: Int
     public let patch: Int
