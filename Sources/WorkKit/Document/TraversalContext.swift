@@ -1994,8 +1994,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       return nil
     }
 
-    let imageGeometry = image.super.geometry  
-    let maskGeometry = maskArchive.super.geometry 
+    let imageGeometry = image.super.geometry
+    let maskGeometry = maskArchive.super.geometry
 
     let imageOffset = CGPoint(
       x: CGFloat(imageGeometry.position.x - maskGeometry.position.x),
@@ -2016,7 +2016,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     imageTransform = imageTransform.rotated(by: imageRotation)
     imageTransform = imageTransform.scaledBy(x: imageScale.width, y: imageScale.height)
 
-    guard let maskPath = parsePathSource(from: maskArchive.pathsource) else {  
+    guard let maskPath = parsePathSource(from: maskArchive.pathsource) else {
       return nil
     }
 
@@ -2585,15 +2585,19 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     from movie: TSD_MovieArchive,
     coordinateSpace: CoordinateSpace,
     drawableID: UInt64?
-  ) throws -> (info: MediaInfo, spatialInfo: SpatialInfo, filepath: String)? {
-    guard let dataID = parseMediaDataID(from: movie),
-      let metadata: TSP_PackageMetadata = document.record(id: 2),
-      let resolvedFile = resolveFile(from: metadata, dataID: dataID),
-      let filename = resolvedFile.0,
-      let filepath = resolvedFile.1
-    else {
+  ) throws -> (info: MediaInfo, spatialInfo: SpatialInfo)? {
+    let dataID = parseMediaDataID(from: movie)
+    let metadata: TSP_PackageMetadata? = document.record(id: 2)
+    let resolvedFile = dataID.flatMap { dataID in
+      metadata.flatMap { resolveFile(from: $0, dataID: dataID) }
+    }
+    let remoteURL = movie.hasMovieRemoteURL ? movie.movieRemoteURL : nil
+    guard resolvedFile != nil || remoteURL != nil else {
       return nil
     }
+
+    let filename = resolvedFile?.0
+    let filepath = resolvedFile?.1
 
     let mediaType = parseMediaType(from: movie)
     let captionInfo = parseMediaCaptionInfo(from: movie, coordinateSpace: coordinateSpace)
@@ -2622,7 +2626,9 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     let height = movie.hasNaturalSize ? Int(movie.naturalSize.height) : nil
     let style = movie.resolveMediaStyle(using: self.document)
 
-    let assetIdentity = resolveAssetIdentity(dataID: dataID, metadata: metadata)
+    let assetIdentity = dataID.flatMap { dataID in
+      metadata.map { resolveAssetIdentity(dataID: dataID, metadata: $0) }
+    }
 
     let info = MediaInfo(
       type: mediaType,
@@ -2631,6 +2637,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       duration: duration,
       filename: filename,
       filepath: filepath,
+      remoteURL: remoteURL,
+      attribution: movie.hasAttribution ? MediaAttribution(movie.attribution) : nil,
       volume: movie.hasVolume ? movie.volume : 1.0,
       loopOption: loopOption,
       posterImage: posterImage,
@@ -2638,8 +2646,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       caption: captionInfo.caption,
       style: style,
       dataID: dataID,
-      digest: assetIdentity.digest,
-      mediaLibraryAssetID: assetIdentity.mediaLibraryAssetID
+      digest: assetIdentity?.digest,
+      mediaLibraryAssetID: assetIdentity?.mediaLibraryAssetID
     )
 
     let spatialInfo = parseSpatialInfo(
@@ -2648,7 +2656,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       drawableID: drawableID
     )
 
-    return (info: info, spatialInfo: spatialInfo, filepath: filepath)
+    return (info: info, spatialInfo: spatialInfo)
   }
 
   /// Parses media caption information.
@@ -2993,7 +3001,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       filepath: resolved.filepath,
       title: captionInfo.title,
       caption: captionInfo.caption,
-      attributes: image.webVideoAttributes,
+      webVideo: image.webVideoInfo,
       style: style,
       dataID: resolved.dataID,
       digest: assetIdentity.digest,
@@ -3079,13 +3087,12 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     drawableID: UInt64?
   ) async throws {
     if movie.is3DObject {
-      print("Processing 3D object drawable with ID \(drawableID?.description ?? "nil")")
       try await process3DObject(movie, coordinateSpace: coordinateSpace, drawableID: drawableID)
       return
     }
 
     guard
-      let mediaData: (info: MediaInfo, spatialInfo: SpatialInfo, filepath: String) =
+      let mediaData: (info: MediaInfo, spatialInfo: SpatialInfo) =
         try parseMediaData(
           from: movie,
           coordinateSpace: coordinateSpace,
@@ -4837,11 +4844,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       let filename = resolvedFile.0,
       let filepath = resolvedFile.1
     else {
-      print("3D object missing model file")
       return nil
     }
-
-    print("\(filename)")
 
     let pose: Pose3D
     if object3DInfo.hasPose3D {

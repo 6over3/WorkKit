@@ -84,6 +84,29 @@ public enum MediaType: Sendable, Codable, Equatable {
   case gif
 }
 
+/// Provider metadata that identifies externally hosted media.
+public struct MediaAttribution: Sendable, Codable, Equatable {
+  public let title: String?
+  public let description: String?
+  public let externalURL: String?
+  public let authorName: String?
+  public let authorURL: String?
+
+  public init(
+    title: String?,
+    description: String?,
+    externalURL: String?,
+    authorName: String?,
+    authorURL: String?
+  ) {
+    self.title = title
+    self.description = description
+    self.externalURL = externalURL
+    self.authorName = authorName
+    self.authorURL = authorURL
+  }
+}
+
 /// Information about a media element in a document.
 public struct MediaInfo: Sendable, Codable, Equatable {
   /// The type of media.
@@ -103,6 +126,12 @@ public struct MediaInfo: Sendable, Codable, Equatable {
 
   /// File path within the document archive.
   public let filepath: String?
+
+  /// URL of externally hosted media when the package does not contain the media bytes.
+  public let remoteURL: String?
+
+  /// Provider metadata for externally hosted media.
+  public let attribution: MediaAttribution?
 
   /// Volume level (0.0 to 1.0).
   public let volume: Float
@@ -169,6 +198,8 @@ public struct MediaInfo: Sendable, Codable, Equatable {
     duration: Double,
     filename: String?,
     filepath: String?,
+    remoteURL: String? = nil,
+    attribution: MediaAttribution? = nil,
     volume: Float,
     loopOption: LoopOption,
     posterImage: ImageInfo?,
@@ -185,6 +216,8 @@ public struct MediaInfo: Sendable, Codable, Equatable {
     self.duration = duration
     self.filename = filename
     self.filepath = filepath
+    self.remoteURL = remoteURL
+    self.attribution = attribution
     self.volume = volume
     self.loopOption = loopOption
     self.posterImage = posterImage
@@ -878,6 +911,23 @@ public struct MediaStyle: Sendable, Codable, Equatable {
   }
 }
 
+/// Metadata for a web video represented by an image preview in an iWork document.
+public struct WebVideoInfo: Sendable, Codable, Equatable {
+  /// The URL stored by iWork for the embedded video.
+  public let url: String?
+
+  /// Provider metadata for the embedded video.
+  public let attribution: MediaAttribution?
+
+  public init(
+    url: String?,
+    attribution: MediaAttribution?
+  ) {
+    self.url = url
+    self.attribution = attribution
+  }
+}
+
 /// Information about an image being processed.
 public struct ImageInfo: Sendable, Codable, Equatable {
   /// The width of the image in pixels.
@@ -901,8 +951,8 @@ public struct ImageInfo: Sendable, Codable, Equatable {
   /// Caption text, if available.
   public let caption: CaptionData?
 
-  /// Additional metadata attributes for the image.
-  public let attributes: [String: String]?
+  /// Web-video metadata when the image is the preview for an embedded video.
+  public let webVideo: WebVideoInfo?
 
   /// Media style properties applied to the image.
   public let style: MediaStyle?
@@ -931,7 +981,7 @@ public struct ImageInfo: Sendable, Codable, Equatable {
   ///   - filepath: File path within the document archive.
   ///   - title: Optional title caption.
   ///   - caption: Optional caption text.
-  ///   - attributes: Optional additional metadata attributes.
+  ///   - webVideo: Web-video metadata when this image is an embed preview.
   ///   - style: Optional media style properties.
   ///   - dataID: Identifier of the backing `TSP.DataInfo` entry.
   ///   - digest: Content digest of the image bytes.
@@ -944,7 +994,7 @@ public struct ImageInfo: Sendable, Codable, Equatable {
     filepath: String,
     title: CaptionData? = nil,
     caption: CaptionData? = nil,
-    attributes: [String: String]? = nil,
+    webVideo: WebVideoInfo? = nil,
     style: MediaStyle? = nil,
     dataID: UInt64? = nil,
     digest: Data? = nil,
@@ -957,7 +1007,7 @@ public struct ImageInfo: Sendable, Codable, Equatable {
     self.filepath = filepath
     self.title = title
     self.caption = caption
-    self.attributes = attributes
+    self.webVideo = webVideo
     self.style = style
     self.dataID = dataID
     self.digest = digest

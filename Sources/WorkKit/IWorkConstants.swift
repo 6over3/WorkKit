@@ -410,7 +410,7 @@ enum DurationStyle: Int {
 struct DurationUnits: OptionSet {
   let rawValue: Int
 
-  static let none = DurationUnits(rawValue: 0)
+  static let none: DurationUnits = []
   static let week = DurationUnits(rawValue: 1)
   static let day = DurationUnits(rawValue: 2)
   static let hour = DurationUnits(rawValue: 4)

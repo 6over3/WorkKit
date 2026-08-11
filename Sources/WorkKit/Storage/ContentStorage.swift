@@ -51,6 +51,9 @@ public protocol ContentStorage: Sendable {
   /// - Throws: ``IWorkError/archiveReadFailed(entry:)`` if the file cannot be read.
   func readData(from path: String) throws -> Data
 
+  /// Copies one stored file to a local URL without materializing all bytes in memory.
+  func copyItem(at path: String, to destinationURL: URL) throws
+
   // MARK: - Querying Contents
 
   /// Returns all paths with the specified suffix.

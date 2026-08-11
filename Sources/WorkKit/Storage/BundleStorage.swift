@@ -40,6 +40,20 @@ package final class BundleStorage: ContentStorage, @unchecked Sendable {
     }
   }
 
+  public func copyItem(at path: String, to destinationURL: URL) throws {
+    try lock.withLock {
+      let sourceURL = rootURL.appendingPathComponent(path)
+      guard fileManager.fileExists(atPath: sourceURL.path) else {
+        throw IWorkError.archiveReadFailed(entry: path)
+      }
+      do {
+        try fileManager.copyItem(at: sourceURL, to: destinationURL)
+      } catch {
+        throw IWorkError.archiveReadFailed(entry: path)
+      }
+    }
+  }
+
   public func paths(with suffix: String) -> [String] {
     lock.withLock {
       guard

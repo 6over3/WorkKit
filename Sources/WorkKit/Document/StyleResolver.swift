@@ -8,6 +8,8 @@ import SwiftProtobuf
 /// This module handles the complex style inheritance chain resolution and property
 /// extraction.
 package enum StyleResolver {
+  /// A child style uses this sentinel to clear an inherited outline level.
+  private static let undefinedOutlineLevel = UInt32.max
 
   // MARK: - Style Chain Building
 
@@ -197,7 +199,10 @@ package enum StyleResolver {
         )
       }
       if props.hasOutlineLevel {
-        outlineLevel = props.outlineLevel
+        outlineLevel =
+          props.outlineLevel == undefinedOutlineLevel
+          ? nil
+          : props.outlineLevel
       }
       if props.hasKeepLinesTogether {
         keepLinesTogether = props.keepLinesTogether
