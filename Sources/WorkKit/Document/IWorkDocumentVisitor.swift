@@ -84,6 +84,29 @@ public enum MediaType: Sendable, Codable, Equatable {
   case gif
 }
 
+/// Provider metadata that identifies externally hosted media.
+public struct MediaAttribution: Sendable, Codable, Equatable {
+  public let title: String?
+  public let description: String?
+  public let externalURL: URL?
+  public let authorName: String?
+  public let authorURL: URL?
+
+  public init(
+    title: String?,
+    description: String?,
+    externalURL: URL?,
+    authorName: String?,
+    authorURL: URL?
+  ) {
+    self.title = title
+    self.description = description
+    self.externalURL = externalURL
+    self.authorName = authorName
+    self.authorURL = authorURL
+  }
+}
+
 /// Information about a media element in a document.
 public struct MediaInfo: Sendable, Codable, Equatable {
   /// The type of media.
@@ -103,6 +126,12 @@ public struct MediaInfo: Sendable, Codable, Equatable {
 
   /// File path within the document archive.
   public let filepath: String?
+
+  /// URL of externally hosted media when the package does not contain the media bytes.
+  public let remoteURL: URL?
+
+  /// Provider metadata for externally hosted media.
+  public let attribution: MediaAttribution?
 
   /// Volume level (0.0 to 1.0).
   public let volume: Float
@@ -169,6 +198,8 @@ public struct MediaInfo: Sendable, Codable, Equatable {
     duration: Double,
     filename: String?,
     filepath: String?,
+    remoteURL: URL? = nil,
+    attribution: MediaAttribution? = nil,
     volume: Float,
     loopOption: LoopOption,
     posterImage: ImageInfo?,
@@ -185,6 +216,8 @@ public struct MediaInfo: Sendable, Codable, Equatable {
     self.duration = duration
     self.filename = filename
     self.filepath = filepath
+    self.remoteURL = remoteURL
+    self.attribution = attribution
     self.volume = volume
     self.loopOption = loopOption
     self.posterImage = posterImage
@@ -880,33 +913,18 @@ public struct MediaStyle: Sendable, Codable, Equatable {
 
 /// Metadata for a web video represented by an image preview in an iWork document.
 public struct WebVideoInfo: Sendable, Codable, Equatable {
-  /// The provider-supplied title.
-  public let title: String?
+  /// The URL stored by iWork for the embedded video.
+  public let url: URL?
 
-  /// The provider-supplied description.
-  public let description: String?
-
-  /// The URL that opens the embedded video.
-  public let externalURL: String?
-
-  /// The provider-supplied author name.
-  public let authorName: String?
-
-  /// The URL that opens the author.
-  public let authorURL: String?
+  /// Provider metadata for the embedded video.
+  public let attribution: MediaAttribution?
 
   public init(
-    title: String?,
-    description: String?,
-    externalURL: String?,
-    authorName: String?,
-    authorURL: String?
+    url: URL?,
+    attribution: MediaAttribution?
   ) {
-    self.title = title
-    self.description = description
-    self.externalURL = externalURL
-    self.authorName = authorName
-    self.authorURL = authorURL
+    self.url = url
+    self.attribution = attribution
   }
 }
 

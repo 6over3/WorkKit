@@ -1,10 +1,10 @@
+import CoreGraphics
 import Foundation
+import ImageIO
 import ModelIO
 import RegexBuilder
-import WorkKit
-import CoreGraphics
-import ImageIO
 import UniformTypeIdentifiers
+import WorkKit
 
 public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unchecked Sendable {
 
@@ -521,17 +521,20 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
 
   private func convertToJPEG(data: Data, sourceFilepath: String) -> Data? {
     guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil),
-          let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
+      let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil)
+    else {
       return nil
     }
 
     let mutableData = NSMutableData()
-    guard let destination = CGImageDestinationCreateWithData(
-      mutableData as CFMutableData,
-      UTType.jpeg.identifier as CFString,
-      1,
-      nil
-    ) else {
+    guard
+      let destination = CGImageDestinationCreateWithData(
+        mutableData as CFMutableData,
+        UTType.jpeg.identifier as CFString,
+        1,
+        nil
+      )
+    else {
       return nil
     }
 
@@ -540,7 +543,7 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
     ]
 
     CGImageDestinationAddImage(destination, cgImage, options as CFDictionary)
-    
+
     guard CGImageDestinationFinalize(destination) else {
       return nil
     }
@@ -590,10 +593,10 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
     isFloating: Bool = false
   ) {
     if let webVideo = info.webVideo {
-      let externalURL = webVideo.externalURL ?? ""
-      let title = webVideo.title
-      let description = webVideo.description
-      
+      let externalURL = webVideo.url ?? webVideo.attribution?.externalURL
+      let title = webVideo.attribution?.title
+      let description = webVideo.attribution?.description
+
       let altText: String
       if let desc = description, !cleanText(desc).isEmpty {
         altText = cleanText(desc).replacingOccurrences(of: "\n", with: " ")
@@ -604,16 +607,17 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
       } else {
         altText = "Video"
       }
-      
+
       let imagePath: String
       if let savedFilename = saveAsset(from: info.filepath) {
         imagePath = savedFilename
       } else {
         imagePath = info.filepath
       }
-      
-      let encodedPath = imagePath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? imagePath
-      
+
+      let encodedPath =
+        imagePath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? imagePath
+
       let imageMarkdown: String
       if let t = title, !cleanText(t).isEmpty {
         let cleanTitle = cleanText(t).replacingOccurrences(of: "\n", with: " ")
@@ -621,13 +625,13 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
       } else {
         imageMarkdown = "![\(escapeMd(altText))](\(encodedPath))"
       }
-      
-      if !externalURL.isEmpty {
-        paragraphBuffer += "[\(imageMarkdown)](\(externalURL))"
+
+      if let externalURL {
+        paragraphBuffer += "[\(imageMarkdown)](\(externalURL.absoluteString))"
       } else {
         paragraphBuffer += imageMarkdown
       }
-      
+
       if isFloating {
         flushToBuffer()
       }
@@ -649,7 +653,7 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
       rawAltText = "image"
       usedOCRForAlt = false
     }
-    
+
     let altText = rawAltText.replacingOccurrences(of: "\n", with: " ")
     guard !altText.isEmpty else { return }
 
@@ -659,8 +663,9 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
     } else {
       imagePath = info.filepath
     }
-    
-    let encodedPath = imagePath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? imagePath
+
+    let encodedPath =
+      imagePath.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? imagePath
 
     let imageTitle: String?
     if let titleData = info.title, !cleanText(titleData.text).isEmpty {
@@ -687,7 +692,7 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
     if isFloating {
       paragraphBuffer += finalMarkdown
       flushToBuffer()
-      
+
       appendMetadata(title: info.title, caption: info.caption)
 
       if !usedOCRForAlt, let ocr = ocrResult {
