@@ -42,6 +42,19 @@ package final class ArchiveStorage: ContentStorage, @unchecked Sendable {
     }
   }
 
+  public func copyItem(at path: String, to destinationURL: URL) throws {
+    try lock.withLock {
+      guard let entry = archive[path] else {
+        throw IWorkError.archiveReadFailed(entry: path)
+      }
+      do {
+        _ = try archive.extract(entry, to: destinationURL)
+      } catch {
+        throw IWorkError.archiveReadFailed(entry: path)
+      }
+    }
+  }
+
   public func paths(with suffix: String) -> [String] {
     lock.withLock {
       archive.compactMap { entry in

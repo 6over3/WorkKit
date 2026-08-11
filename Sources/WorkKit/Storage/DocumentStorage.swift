@@ -27,6 +27,15 @@ public struct DocumentStorage: ContentStorage, Sendable {
     }
   }
 
+  public func copyItem(at path: String, to destinationURL: URL) throws {
+    switch backing {
+    case .bundle(let storage):
+      try storage.copyItem(at: path, to: destinationURL)
+    case .archive(let storage):
+      try storage.copyItem(at: path, to: destinationURL)
+    }
+  }
+
   public func paths(with suffix: String) -> [String] {
     switch backing {
     case .bundle(let s): s.paths(with: suffix)
