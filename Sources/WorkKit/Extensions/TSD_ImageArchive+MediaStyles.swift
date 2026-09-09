@@ -1,4 +1,3 @@
-
 extension TSD_ImageArchive {
   func resolveMediaStyle(using document: IWorkDocument, mask: Mask? = nil) -> MediaStyle? {
     guard self.hasStyle,

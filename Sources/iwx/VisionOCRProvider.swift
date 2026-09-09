@@ -1,12 +1,12 @@
-import Vision
 import CoreGraphics
 import Foundation
+import Vision
 import WorkKit
 
 #if canImport(AppKit)
-import AppKit
+  import AppKit
 #elseif canImport(UIKit)
-import UIKit
+  import UIKit
 #endif
 
 /// Provides optical character recognition using Apple's Vision framework.
@@ -35,7 +35,7 @@ public struct VisionOCRProvider: OCRProvider {
     info: ImageInfo
   ) async throws -> OCRResult {
     guard let cgImage = createCGImage(from: imageData) else {
-        print(" Failed to create CGImage from image data.")
+      print(" Failed to create CGImage from image data.")
       throw OCRProviderError.imageConversionFailed
     }
     let request = VNRecognizeTextRequest()
@@ -86,26 +86,29 @@ public struct VisionOCRProvider: OCRProvider {
 
   private func createCGImage(from data: Data) -> CGImage? {
     #if canImport(AppKit)
-    guard let nsImage = NSImage(data: data) else {
-      return nil
-    }
-    var proposedRect = CGRect.zero
-    guard let cgImage = nsImage.cgImage(
-      forProposedRect: &proposedRect,
-      context: nil,
-      hints: nil
-    ) else {
-      return nil
-    }
-    return cgImage
+      guard let nsImage = NSImage(data: data) else {
+        return nil
+      }
+      var proposedRect = CGRect.zero
+      guard
+        let cgImage = nsImage.cgImage(
+          forProposedRect: &proposedRect,
+          context: nil,
+          hints: nil
+        )
+      else {
+        return nil
+      }
+      return cgImage
     #elseif canImport(UIKit)
-    guard let uiImage = UIImage(data: data),
-          let cgImage = uiImage.cgImage else {
-      return nil
-    }
-    return cgImage
+      guard let uiImage = UIImage(data: data),
+        let cgImage = uiImage.cgImage
+      else {
+        return nil
+      }
+      return cgImage
     #else
-    return nil
+      return nil
     #endif
   }
 

@@ -448,30 +448,20 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       return
     }
 
-    guard let metadata: TSP_PackageMetadata = document.record(id: 2) else {
-      return
-    }
-
     let slideWidth = Double(showArchive.size.width)
     let slideHeight = Double(showArchive.size.height)
     let slideBounds = CGRect(x: 0, y: 0, width: slideWidth, height: slideHeight)
 
-    var slideIDs: [UInt64] = []
-    for component in metadata.components {
-      guard component.preferredLocator == "Slide" else {
+    var visibleIndex = 0
+    for slideNodeReference in showArchive.slideTree.slides {
+      guard let slideNode: KN_SlideNodeArchive = document.dereference(slideNodeReference),
+        shouldVisitKeynoteSlide(slideNode),
+        let slide: KN_SlideArchive = document.dereference(slideNode.slide)
+      else {
         continue
       }
 
-      slideIDs.append(component.identifier)
-    }
-    slideIDs.sort()
-
-    for (index, slideID) in slideIDs.enumerated() {
-      guard let slide: KN_SlideArchive = document.record(id: slideID) else {
-        continue
-      }
-
-      await visitor.willVisitSlide(index: index, bounds: slideBounds)
+      await visitor.willVisitSlide(index: visibleIndex, bounds: slideBounds)
 
       currentZOrderMap.removeAll()
       buildZOrderMapFromArray(slide.drawablesZOrder)
@@ -482,7 +472,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
         try await traverseDrawable(drawableRef, coordinateSpace: .slide, containerInfo: nil)
       }
 
-      await visitor.didVisitSlide(index: index)
+      await visitor.didVisitSlide(index: visibleIndex)
+      visibleIndex += 1
     }
   }
 
@@ -1997,24 +1988,14 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     let imageGeometry = image.super.geometry
     let maskGeometry = maskArchive.super.geometry
 
-    let imageOffset = CGPoint(
-      x: CGFloat(imageGeometry.position.x - maskGeometry.position.x),
-      y: CGFloat(imageGeometry.position.y - maskGeometry.position.y)
+    guard maskGeometry.size.width > 0, maskGeometry.size.height > 0 else {
+      return nil
+    }
+    let sourceToMaskNormalized = normalizedImageToMaskTransform(
+      imageFrame: parseFrame(from: imageGeometry),
+      maskFrame: parseFrame(from: maskGeometry),
+      maskAngle: CGFloat(maskGeometry.angle)
     )
-
-    let imageScale = CGSize(
-      width: maskGeometry.size.width > 0
-        ? CGFloat(imageGeometry.size.width / maskGeometry.size.width) : 1.0,
-      height: maskGeometry.size.height > 0
-        ? CGFloat(imageGeometry.size.height / maskGeometry.size.height) : 1.0
-    )
-
-    let imageRotation = CGFloat(imageGeometry.angle - maskGeometry.angle)
-
-    var imageTransform = CGAffineTransform.identity
-    imageTransform = imageTransform.translatedBy(x: imageOffset.x, y: imageOffset.y)
-    imageTransform = imageTransform.rotated(by: imageRotation)
-    imageTransform = imageTransform.scaledBy(x: imageScale.width, y: imageScale.height)
 
     guard let maskPath = parsePathSource(from: maskArchive.pathsource) else {
       return nil
@@ -2026,7 +2007,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       size: CGSize(
         width: CGFloat(maskGeometry.size.width), height: CGFloat(maskGeometry.size.height)),
       angle: CGFloat(maskGeometry.angle),
-      imageTransform: imageTransform
+      sourceToMaskNormalized: sourceToMaskNormalized
     )
   }
 
@@ -2455,17 +2436,13 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     } else {
       var frame = parseFrame(from: shapeInfo.super.super.geometry)
 
-      if frame.size.width == 0 && frame.size.height == 0 {
-        if shapeInfo.super.hasPathsource {
-          let pathSource = shapeInfo.super.pathsource
-          if pathSource.hasBezierPathSource {
-            let naturalSize = pathSource.bezierPathSource.naturalSize
-            frame.size = CGSize(
-              width: CGFloat(naturalSize.width),
-              height: CGFloat(naturalSize.height)
-            )
-          }
-        }
+      if shapeInfo.super.hasPathsource,
+        let path = parsePathSource(from: shapeInfo.super.pathsource)
+      {
+        frame = resolvedShapeFrame(
+          frame,
+          pathBounds: calculateBounds(from: path)
+        )
       }
 
       let rotation = Double(shapeInfo.super.super.geometry.angle)
@@ -2979,15 +2956,17 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
 
     let captionInfo = parseImageCaptionInfo(from: image, coordinateSpace: coordinateSpace)
     let description = parseAccessibilityDescription(from: image)
-    let spatialInfo: SpatialInfo
-
-    spatialInfo = parseSpatialInfo(
+    let sourceSpatialInfo = parseSpatialInfo(
       from: image.super,
       coordinateSpace: coordinateSpace,
       drawableID: drawableID
     )
 
     let mask = parseImageMask(from: image)
+    let spatialInfo =
+      mask.map {
+        visibleMaskedImageSpatialInfo(source: sourceSpatialInfo, mask: $0)
+      } ?? sourceSpatialInfo
 
     let style = image.resolveMediaStyle(using: self.document, mask: mask)
 
@@ -3035,7 +3014,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     drawableID: UInt64?
   ) -> (
     rowCount: UInt32, columnCount: UInt32, spatialInfo: SpatialInfo, stringMap: [UInt32: String],
-    richMap: [UInt32: TSP_Reference], tiles: [TST_TileStorage.Tile]
+    richMap: [UInt32: TSP_Reference], tiles: [TST_TileStorage.Tile],
+    merges: [IWorkTableCoordinate: IWorkTableMerge]
   )? {
     let rowCount = table.numberOfRows
     let columnCount = table.numberOfColumns
@@ -3046,16 +3026,14 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       drawableID: drawableID
     )
 
-    guard table.baseDataStore.hasStringTable else {
-      return nil
-    }
-
-    guard table.baseDataStore.hasRichTextTable else {
-      return nil
-    }
-
-    let stringTable: TST_TableDataList? = document.dereference(table.baseDataStore.stringTable)
-    let richTable: TST_TableDataList? = document.dereference(table.baseDataStore.richTextTable)
+    let stringTable: TST_TableDataList? =
+      table.baseDataStore.hasStringTable
+      ? document.dereference(table.baseDataStore.stringTable)
+      : nil
+    let richTable: TST_TableDataList? =
+      table.baseDataStore.hasRichTextTable
+      ? document.dereference(table.baseDataStore.richTextTable)
+      : nil
 
     let stringMap = Dictionary(
       uniqueKeysWithValues: (stringTable?.entries ?? []).map { ($0.key, $0.string) }
@@ -3068,8 +3046,50 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
 
     return (
       rowCount: rowCount, columnCount: columnCount, spatialInfo: spatialInfo, stringMap: stringMap,
-      richMap: richMap, tiles: tiles
+      richMap: richMap, tiles: tiles,
+      merges: tableMerges(
+        table.baseDataStore,
+        rowCount: Int(rowCount),
+        columnCount: Int(columnCount)
+      )
     )
+  }
+
+  private func tableMerges(
+    _ dataStore: TST_DataStore,
+    rowCount: Int,
+    columnCount: Int
+  ) -> [IWorkTableCoordinate: IWorkTableMerge] {
+    guard dataStore.hasMergeRegionMap,
+      let archive: TST_MergeRegionMapArchive = document.dereference(dataStore.mergeRegionMap)
+    else {
+      return [:]
+    }
+    var result: [IWorkTableCoordinate: IWorkTableMerge] = [:]
+    for range in archive.cellRange {
+      let origin = iWorkTableCoordinate(range.origin)
+      let size = iWorkTableExtent(range.size)
+      guard origin.row >= 0,
+        origin.column >= 0,
+        size.rows > 0,
+        size.columns > 0,
+        origin.row + size.rows <= rowCount,
+        origin.column + size.columns <= columnCount
+      else {
+        continue
+      }
+      let merge = IWorkTableMerge(
+        origin: origin,
+        rowSpan: size.rows,
+        columnSpan: size.columns
+      )
+      for row in origin.row..<(origin.row + size.rows) {
+        for column in origin.column..<(origin.column + size.columns) {
+          result[IWorkTableCoordinate(row: row, column: column)] = merge
+        }
+      }
+    }
+    return result
   }
 
   // MARK: - Process Functions
@@ -3333,6 +3353,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
           columnCount: Int(tableData.columnCount),
           stringMap: tableData.stringMap,
           richMap: tableData.richMap,
+          merges: tableData.merges,
           coordinateSpace: coordinateSpace,
           tableModel: table
         )
@@ -3361,6 +3382,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     columnCount: Int,
     stringMap: [UInt32: String],
     richMap: [UInt32: TSP_Reference],
+    merges: [IWorkTableCoordinate: IWorkTableMerge],
     coordinateSpace: CoordinateSpace,
     tableModel: TST_TableModelArchive
   ) async throws {
@@ -3370,10 +3392,23 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     let cellStorageBuffer = rowInfo.cellStorageBuffer
 
     for columnIndex in 0..<columnCount {
+      guard columnIndex < offsets.count else { break }
+      let coordinate = IWorkTableCoordinate(row: rowIndex, column: columnIndex)
+      let merge = merges[coordinate]
+      if let merge, merge.origin != coordinate {
+        continue
+      }
       let offset = offsets[columnIndex]
 
       guard offset != 0xFFFF else {
-        await visitor.visitTableCell(row: rowIndex, column: columnIndex, content: .empty)
+        await visitor.visitTableCell(
+          IWorkTableCell(
+            row: rowIndex,
+            column: columnIndex,
+            rowSpan: merge?.rowSpan ?? 1,
+            columnSpan: merge?.columnSpan ?? 1,
+            content: .empty
+          ))
         continue
       }
 
@@ -3388,7 +3423,14 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
         tableModel: tableModel
       )
 
-      await visitor.visitTableCell(row: rowIndex, column: columnIndex, content: content)
+      await visitor.visitTableCell(
+        IWorkTableCell(
+          row: rowIndex,
+          column: columnIndex,
+          rowSpan: merge?.rowSpan ?? 1,
+          columnSpan: merge?.columnSpan ?? 1,
+          content: content
+        ))
     }
   }
 
@@ -5017,4 +5059,83 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     case table(position: Int, reference: TSP_Reference)
     case shape(position: Int, reference: TSP_Reference)
   }
+}
+
+func shouldVisitKeynoteSlide(_ node: KN_SlideNodeArchive) -> Bool {
+  node.hasSlide && !node.isSkipped
+}
+
+package func resolvedShapeFrame(_ frame: CGRect, pathBounds: CGRect?) -> CGRect {
+  guard let pathBounds else { return frame }
+  var resolved = frame
+  if resolved.width <= 0, pathBounds.width > 0 {
+    resolved.size.width = pathBounds.width
+  }
+  if resolved.height <= 0, pathBounds.height > 0 {
+    resolved.size.height = pathBounds.height
+  }
+  return resolved
+}
+
+/// Maps normalized source-image coordinates into normalized visible-mask coordinates.
+package func normalizedImageToMaskTransform(
+  imageFrame: CGRect,
+  maskFrame: CGRect,
+  maskAngle: CGFloat
+) -> CGAffineTransform {
+  precondition(imageFrame.width > 0 && imageFrame.height > 0)
+  precondition(maskFrame.width > 0 && maskFrame.height > 0)
+
+  func map(_ source: CGPoint) -> CGPoint {
+    let imageLocal = CGPoint(
+      x: source.x * imageFrame.width,
+      y: source.y * imageFrame.height
+    )
+    let maskOffset = CGPoint(
+      x: imageLocal.x - maskFrame.midX,
+      y: imageLocal.y - maskFrame.midY
+    )
+    let maskCosine = cos(maskAngle)
+    let maskSine = sin(maskAngle)
+    let maskLocal = CGPoint(
+      x: maskOffset.x * maskCosine + maskOffset.y * maskSine,
+      y: -maskOffset.x * maskSine + maskOffset.y * maskCosine
+    )
+    return CGPoint(
+      x: (maskLocal.x + maskFrame.width / 2) / maskFrame.width,
+      y: (maskLocal.y + maskFrame.height / 2) / maskFrame.height
+    )
+  }
+
+  let origin = map(.zero)
+  let unitX = map(CGPoint(x: 1, y: 0))
+  let unitY = map(CGPoint(x: 0, y: 1))
+  return CGAffineTransform(
+    a: unitX.x - origin.x,
+    b: unitX.y - origin.y,
+    c: unitY.x - origin.x,
+    d: unitY.y - origin.y,
+    tx: origin.x,
+    ty: origin.y
+  )
+}
+
+package func visibleMaskedImageSpatialInfo(
+  source: SpatialInfo,
+  mask: Mask
+) -> SpatialInfo {
+  SpatialInfo(
+    coordinateSpace: source.coordinateSpace,
+    frame: CGRect(
+      x: source.frame.minX + mask.position.x,
+      y: source.frame.minY + mask.position.y,
+      width: mask.size.width,
+      height: mask.size.height
+    ),
+    rotation: source.rotation + Double(mask.angle),
+    zIndex: source.zIndex,
+    isAnchoredToText: source.isAnchoredToText,
+    isFloatingAboveText: source.isFloatingAboveText,
+    drawableID: source.drawableID
+  )
 }

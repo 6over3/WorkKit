@@ -247,11 +247,11 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
     resetContext()
   }
 
-  public func visitTableCell(row: Int, column: Int, content: TableCellContent) async {
+  public func visitTableCell(_ cell: IWorkTableCell) async {
     guard let table = currentTable else { return }
 
     let cellText: String
-    switch content {
+    switch cell.content {
     case .empty:
       cellText = ""
     case .number(let value, _):
@@ -272,7 +272,7 @@ public final class MarkdownVisitor<O: OCRProvider>: IWorkDocumentVisitor, @unche
       cellText = "#ERROR!"
     }
 
-    table.setCell(row: row, column: column, content: cellText)
+    table.setCell(row: cell.row, column: cell.column, content: cellText)
   }
 
   public func didVisitTable() async {

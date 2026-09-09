@@ -290,7 +290,9 @@ enum IWorkParser {
     )
   }
 
-  private static func parseLegacyMetadata<S: ContentStorage>(from storage: S) throws -> IWorkMetadata {
+  private static func parseLegacyMetadata<S: ContentStorage>(from storage: S) throws
+    -> IWorkMetadata
+  {
     let buildVersionHistory: [String] = {
       guard let plistData = try? storage.readData(from: "buildVersionHistory.plist"),
         let history = try? PropertyListSerialization.propertyList(

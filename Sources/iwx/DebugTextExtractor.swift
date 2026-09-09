@@ -840,7 +840,6 @@ public final class DebugTextExtractor<O: OCRProvider>: IWorkDocumentVisitor, @un
 
     log("  Path:       \(info.filepath)")
 
-
     if let hyperlink = hyperlink {
       log("")
       log("Hyperlink:")
@@ -1279,12 +1278,12 @@ public final class DebugTextExtractor<O: OCRProvider>: IWorkDocumentVisitor, @un
     indentLevel -= 1
   }
 
-  public func visitTableCell(row: Int, column: Int, content: TableCellContent) {
-    log("Cell[\(row),\(column)]")
+  public func visitTableCell(_ cell: IWorkTableCell) {
+    log("Cell[\(cell.row),\(cell.column)] span=\(cell.rowSpan)x\(cell.columnSpan)")
     indentLevel += 1
 
     let contentDesc: String
-    switch content {
+    switch cell.content {
     case .empty:
       contentDesc = "EMPTY"
 
@@ -1328,7 +1327,7 @@ public final class DebugTextExtractor<O: OCRProvider>: IWorkDocumentVisitor, @un
 
     log("Type: \(contentDesc)")
 
-    if case .richText(let elements, _) = content {
+    if case .richText(let elements, _) = cell.content {
       log("")
       log("Rich Text Content:")
       indentLevel += 1
@@ -1338,7 +1337,7 @@ public final class DebugTextExtractor<O: OCRProvider>: IWorkDocumentVisitor, @un
       indentLevel -= 1
     }
 
-    if let metadata = content.metadata {
+    if let metadata = cell.content.metadata {
       log("")
       logCellMetadata(metadata)
     }

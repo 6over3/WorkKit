@@ -3,7 +3,6 @@ extension TSD_ImageArchive {
     return self.hasTSWP_EquationInfoArchive_equationSourceText
   }
 
-
   var equation: IWorkEquation? {
     guard self.isEquation else { return nil }
     let equationSourceText = self.TSWP_EquationInfoArchive_equationSourceText

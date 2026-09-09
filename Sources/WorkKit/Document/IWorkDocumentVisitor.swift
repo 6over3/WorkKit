@@ -844,30 +844,31 @@ public struct Mask: Sendable, Codable, Equatable {
   /// The geometric shape of the mask (e.g., a star, rounded rectangle, or custom path).
   public let path: PathSource
 
-  /// The mask's absolute position on the slide's canvas.
+  /// The mask's position in the masked image's local coordinate space.
   public let position: CGPoint
 
-  /// The mask's absolute size on the slide's canvas.
+  /// The mask's size in the masked image's local coordinate space.
   public let size: CGSize
 
   /// The mask's rotation angle in radians.
   public let angle: CGFloat
 
-  /// The affine transform describing the image's position, scale, and rotation *relative to the mask's frame*.
-  public let imageTransform: CGAffineTransform
+  /// Maps normalized source-image coordinates into normalized mask coordinates.
+  /// Values outside `0...1` identify source pixels cropped by the mask frame.
+  public let sourceToMaskNormalized: CGAffineTransform
 
   public init(
     path: PathSource,
     position: CGPoint,
     size: CGSize,
     angle: CGFloat,
-    imageTransform: CGAffineTransform
+    sourceToMaskNormalized: CGAffineTransform
   ) {
     self.path = path
     self.position = position
     self.size = size
     self.angle = angle
-    self.imageTransform = imageTransform
+    self.sourceToMaskNormalized = sourceToMaskNormalized
   }
 }
 
@@ -3108,6 +3109,29 @@ public enum TableCellContent: Sendable, Codable, Equatable {
   }
 }
 
+/// One addressable iWork table cell and its logical grid extent.
+public struct IWorkTableCell: Sendable, Codable, Equatable {
+  public let row: Int
+  public let column: Int
+  public let rowSpan: Int
+  public let columnSpan: Int
+  public let content: TableCellContent
+
+  public init(
+    row: Int,
+    column: Int,
+    rowSpan: Int = 1,
+    columnSpan: Int = 1,
+    content: TableCellContent
+  ) {
+    self.row = row
+    self.column = column
+    self.rowSpan = rowSpan
+    self.columnSpan = columnSpan
+    self.content = content
+  }
+}
+
 // MARK: - 3D Object Types
 
 /// 3D orientation using Euler angles.
@@ -3443,10 +3467,8 @@ public protocol IWorkDocumentVisitor: Sendable {
   /// from `IWorkConstants.currencies`.
   ///
   /// - Parameters:
-  ///   - row: The cell's zero-based row index.
-  ///   - column: The cell's zero-based column index.
-  ///   - content: The cell's content type and value (text, number, date, currency, etc.).
-  func visitTableCell(row: Int, column: Int, content: TableCellContent) async
+  /// - Parameter cell: The cell's coordinates, merged extent, and typed value.
+  func visitTableCell(_ cell: IWorkTableCell) async
 
   /// Called after visiting a table row and all its cells.
   ///
@@ -3596,7 +3618,7 @@ extension IWorkDocumentVisitor {
     spatialInfo: SpatialInfo
   ) async {}
   public func willVisitTableRow(index: Int) async {}
-  public func visitTableCell(row: Int, column: Int, content: TableCellContent) async {}
+  public func visitTableCell(_ cell: IWorkTableCell) async {}
   public func didVisitTableRow(index: Int) async {}
   public func didVisitTable() async {}
 
