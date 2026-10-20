@@ -2101,7 +2101,7 @@ public struct Hyperlink: Sendable, Codable, Equatable {
   /// The URL target.
   public let url: String
 
-  /// The range within the paragraph where this hyperlink appears.
+  /// The UTF-16 offset range within the text storage where this hyperlink appears.
   public let range: Range<Int>
 
   /// Creates a new hyperlink.

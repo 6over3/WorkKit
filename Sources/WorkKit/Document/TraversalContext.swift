@@ -606,7 +606,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       return
     }
 
-    let runes = Array(text)
+    let runes = Array(text.utf16)
     let paragraphStyles = storage.tableParaStyle.entries
 
     let allAttachments = parseAttachments(from: storage)
@@ -752,8 +752,8 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
   /// Processes all inline content (text, attachments, footnotes) in their exact sequential order.
   ///
   /// - Parameters:
-  ///   - runes: Character array of the entire text storage.
-  ///   - range: Character index range for this paragraph.
+  ///   - runes: UTF-16 code units of the entire text storage.
+  ///   - range: UTF-16 offset range for this paragraph.
   ///   - attachments: All attachments from the storage.
   ///   - charStyleTable: Character style table for formatting overrides.
   ///   - smartFields: Smart fields within the text.
@@ -762,7 +762,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
   ///   - coordinateSpace: Coordinate system for spatial positioning.
   /// - Throws: Errors from processing attachments or parsing data.
   private func processSequentialContent(
-    runes: [Character],
+    runes: [UTF16.CodeUnit],
     range: Range<Int>,
     attachments: [(position: UInt32, reference: TSP_Reference)],
     charStyleTable: TSWP_ObjectAttributeTable,
@@ -792,7 +792,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
           )
         )
       }
-      currentPosition += segment.text.count
+      currentPosition += segment.text.utf16.count
     }
 
     let paraAttachments = attachments.filter {
@@ -1115,7 +1115,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       return []
     }
 
-    let runes = Array(text)
+    let runes = Array(text.utf16)
     let paragraphStyles = storage.tableParaStyle.entries
 
     let attachments = parseAttachments(from: storage)
@@ -1158,7 +1158,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
           content = .text(segment.text, style: segment.style, hyperlink: nil)
         }
         allElements.append((position: currentPosition, content: content))
-        currentPosition += segment.text.count
+        currentPosition += segment.text.utf16.count
       }
 
       let paraAttachments = attachments.filter {
@@ -1311,14 +1311,14 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
   /// Parses text segments with their styles and hyperlinks from a text range.
   ///
   /// - Parameters:
-  ///   - runes: Character array of the entire text storage.
-  ///   - range: Character index range for this text run.
+  ///   - runes: UTF-16 code units of the entire text storage.
+  ///   - range: UTF-16 offset range for this text run.
   ///   - charStyleTable: Character style table for formatting overrides.
   ///   - smartFields: Smart fields within the text.
   ///   - paragraphStyle: Base paragraph style for inheriting character properties.
   /// - Returns: Array of text segments with their styles and hyperlinks.
   private func parseTextSegments(
-    runes: [Character],
+    runes: [UTF16.CodeUnit],
     range: Range<Int>,
     charStyleTable: TSWP_ObjectAttributeTable,
     smartFields: [(position: UInt32, reference: TSP_Reference)],
@@ -1332,7 +1332,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     var segments: [(text: String, style: CharacterStyle, hyperlink: Hyperlink?)] = []
 
     guard !charStyleTable.entries.isEmpty else {
-      let text = String(runes[range])
+      let text = String(decoding: runes[range], as: UTF16.self)
       let hyperlink = createHyperlink(for: range, text: text)
       segments.append((text: text, style: defaultCharStyle, hyperlink: hyperlink))
       return segments
@@ -1359,13 +1359,13 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
       }
 
       if position < styleStart {
-        let text = String(runes[position..<styleStart])
+        let text = String(decoding: runes[position..<styleStart], as: UTF16.self)
         let hyperlink = createHyperlink(for: position..<styleStart, text: text)
         segments.append((text: text, style: defaultCharStyle, hyperlink: hyperlink))
         position = styleStart
       }
 
-      let text = String(runes[styleStart..<styleEnd])
+      let text = String(decoding: runes[styleStart..<styleEnd], as: UTF16.self)
       let style = resolveCharacterStyle(from: styleEntry, baseParagraphStyle: paragraphStyle)
       let hyperlink = createHyperlink(for: styleStart..<styleEnd, text: text)
       segments.append((text: text, style: style, hyperlink: hyperlink))
@@ -1373,7 +1373,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     }
 
     if position < range.upperBound {
-      let text = String(runes[position..<range.upperBound])
+      let text = String(decoding: runes[position..<range.upperBound], as: UTF16.self)
       let hyperlink = createHyperlink(for: position..<range.upperBound, text: text)
       segments.append((text: text, style: defaultCharStyle, hyperlink: hyperlink))
     }
@@ -1794,7 +1794,7 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
   /// Creates a hyperlink if the text range overlaps with any cached hyperlink field.
   ///
   /// - Parameters:
-  ///   - range: Character index range of the text.
+  ///   - range: UTF-16 offset range of the text.
   ///   - text: Text content for the hyperlink.
   /// - Returns: Hyperlink with URL and display text, or `nil` if no hyperlink applies.
   private func createHyperlink(for range: Range<Int>, text: String) -> Hyperlink? {
