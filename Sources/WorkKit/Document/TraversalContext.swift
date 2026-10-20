@@ -4089,41 +4089,6 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
     return nil
   }
 
-  // MARK: - Decimal128 Unpacking
-
-  /// Unpacks a 128-bit decimal value from the cell storage buffer.
-  ///
-  /// Uses the bias constant from IWorkConstants for accurate unpacking.
-  ///
-  /// - Parameters:
-  ///   - buffer: Cell storage buffer.
-  ///   - offset: Byte offset to the decimal value.
-  /// - Returns: Unpacked floating-point value.
-  private func unpackDecimal128(from buffer: Data, offset: Int) -> Double {
-    guard offset + 16 <= buffer.count else {
-      return 0.0
-    }
-
-    let byte15 = UInt16(buffer[offset + 15])
-    let byte14 = UInt16(buffer[offset + 14])
-    let expBits = ((byte15 & 0x7F) << 7) | (byte14 >> 1)
-    let exp = Int(expBits) - IWorkConstants.decimal128Bias
-
-    var mantissa: UInt64 = UInt64(byte14 & 1)
-    for i in (0..<14).reversed() {
-      mantissa = mantissa * 256 + UInt64(buffer[offset + i])
-    }
-
-    let sign = (byte15 & 0x80) != 0
-
-    var value = Double(mantissa) * pow(10.0, Double(exp))
-    if sign {
-      value = -value
-    }
-
-    return value
-  }
-
   // MARK: - Chart Processing
 
   /// Processes a chart drawable.
@@ -5063,6 +5028,35 @@ package final class TraversalContext<V: IWorkDocumentVisitor, O: OCRProvider> {
 
 func shouldVisitKeynoteSlide(_ node: KN_SlideNodeArchive) -> Bool {
   node.hasSlide && !node.isSkipped
+}
+
+/// Unpacks a 128-bit decimal value from the cell storage buffer.
+///
+/// The 113-bit coefficient can exceed `UInt64`, so it is accumulated as a `Double`.
+/// Negative exponents divide by the power of ten, which is exact up to `1e22`.
+///
+/// - Parameters:
+///   - buffer: Cell storage buffer.
+///   - offset: Byte offset to the decimal value.
+/// - Returns: Unpacked floating-point value.
+func unpackDecimal128(from buffer: Data, offset: Int) -> Double {
+  guard offset + 16 <= buffer.count else {
+    return 0.0
+  }
+
+  let byte15 = UInt16(buffer[offset + 15])
+  let byte14 = UInt16(buffer[offset + 14])
+  let expBits = ((byte15 & 0x7F) << 7) | (byte14 >> 1)
+  let exp = Int(expBits) - IWorkConstants.decimal128Bias
+
+  var coefficient = Double(byte14 & 1)
+  for i in (0..<14).reversed() {
+    coefficient = coefficient * 256 + Double(buffer[offset + i])
+  }
+
+  let scale = pow(10.0, Double(abs(exp)))
+  let magnitude = exp < 0 ? coefficient / scale : coefficient * scale
+  return (byte15 & 0x80) != 0 ? -magnitude : magnitude
 }
 
 package func resolvedShapeFrame(_ frame: CGRect, pathBounds: CGRect?) -> CGRect {

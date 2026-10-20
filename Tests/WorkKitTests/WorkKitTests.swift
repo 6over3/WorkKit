@@ -155,3 +155,32 @@ import Testing
   #expect(iWorkTableExtent(packed) == IWorkTableExtent(rows: 4, columns: 3))
   #expect(iWorkTableExtent(expanded) == IWorkTableExtent(rows: 70_000, columns: 80_000))
 }
+
+@Test func decimal128UnpacksCoefficientsBeyondUInt64() {
+  let bytes = decimal128Bytes(coefficient: "3333333333333333333333333333333333", exponent: -34)
+  #expect(abs(unpackDecimal128(from: bytes, offset: 0) - 1.0 / 3.0) < 1e-15)
+}
+
+@Test func decimal128DividesByPowersOfTen() {
+  let third = decimal128Bytes(coefficient: "333333333333333", exponent: -15)
+  #expect(unpackDecimal128(from: third, offset: 0) == 0.333333333333333)
+
+  let negative = decimal128Bytes(coefficient: "25", exponent: 2, negative: true)
+  #expect(unpackDecimal128(from: negative, offset: 0) == -2500)
+}
+
+private func decimal128Bytes(coefficient: String, exponent: Int, negative: Bool = false) -> Data {
+  var bytes = [UInt8](repeating: 0, count: 16)
+  for digit in coefficient {
+    var carry = digit.wholeNumberValue!
+    for index in 0..<15 {
+      let value = Int(bytes[index]) * 10 + carry
+      bytes[index] = UInt8(value & 0xFF)
+      carry = value >> 8
+    }
+  }
+  let biased = exponent + IWorkConstants.decimal128Bias
+  bytes[14] = (bytes[14] & 1) | UInt8((biased & 0x7F) << 1)
+  bytes[15] = UInt8((biased >> 7) & 0x7F) | (negative ? 0x80 : 0)
+  return Data(bytes)
+}
